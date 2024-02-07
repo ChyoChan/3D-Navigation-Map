@@ -7,15 +7,9 @@ function removeFromArray(arr, elt) {
 }
 
 
-
-
-
 function heuristic(nodeA, nodeB) {
   return dist(nodeA.x, nodeA.y, nodeB.x, nodeB.y);
 }
-
-
-
 
 
 var cols = 57; // number of colums of the grid
@@ -28,13 +22,18 @@ var end;
 var w, h;
 var path = [];
 var img;
-var roomSet = {"501":[27, 56], "502":[40, 66], "503":[40, 47]
+
+function setup() {
+  var roomSet = {"501":[27, 56], "502":[40, 66], "503":[40, 47]
              , "504":[40, 39], "505":[46, 32], "506":[36, 32]
              , "507":[23, 32], "508":[16, 12], "509":[16, 21]
              , "510":[16, 30], "escalator":[24, 36]};
+  var selectStartIndex = roomSet[document.getElementById("start").value]; 
+  var selectEndIndex = roomSet[document.getElementById("end").value];
+  console.log(selectStartIndex);
+  console.log(selectEndIndex);
 
 
-function setup() {
   img = loadImage('5floor_done_75.png');
   createCanvas(1144, 1866);
   w = width / cols; // width of each node 
@@ -59,8 +58,8 @@ function setup() {
     }
   }
   
-  start = grid[16][6]; // define the starting point
-  end = grid[35][44]; // define the ending point
+  start = grid.at(selectStartIndex[0]).at(selectStartIndex[1]); // define the starting point
+  end = grid.at(selectEndIndex[0]).at(selectEndIndex[1]); // define the ending point
   
 
   openSet.push(start);
@@ -161,8 +160,6 @@ function draw() { // if will self-loopping automatically by the p5.js
     endShape();
     start.show_node('green');
     end.show_node('red');
-    //let xIndex = roomSet["510"];
-    //grid.at(xIndex[0]).at(xIndex[1]).show_node('red');
-    grid[24][36].show_node('red');
+    //grid[24][36].show_node('red');
   }
 }
