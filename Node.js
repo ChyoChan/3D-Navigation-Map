@@ -8,8 +8,8 @@ function Node(x ,y){
     this.previous = undefined; // declare the previous node 
     this.obstacles = false; // declare the obstacles
     this.room = undefined;
-
-    if (x >= 18 && y <= 11) {
+    this.fiveFloor = function(){
+      if (x >= 18 && y <= 11) {
         this.obstacles = true;
     }
 
@@ -74,7 +74,10 @@ function Node(x ,y){
             this.obstacles = true;
         }
     }
-  
+    }
+    
+
+    
     
     this.show_grid = function(color){
       fill(0, 0, 0, 0);
@@ -88,7 +91,7 @@ function Node(x ,y){
     this.show_node = function(color) {
       fill(color);
       noStroke();
-      ellipse(this.x*w + w / 2, this.y*h + h / 2, 2*w/3, 2*w/3);
+      ellipse(this.x*w + w / 2, this.y*h + h / 2, w, w);
       //rect(this.x*w, this.y*h, w - 1, h - 1);
     }
   
