@@ -9,9 +9,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.sound.min.js"></script>
 </head>
 <body>
+    
+    
     <script src="Node.js"></script>
     <script src="aStar_diagonal_final_path_only.js"></script>
-    <div>
+    </div>
+    <div class="choose">
         <label id="selector_label_start" for="start">starting point:</label>
         <select id="start" name="start">
             <option value="501">501</option>
@@ -27,7 +30,7 @@
         </select>
     </div>
     <br>
-    <div>
+    <div class="choose">
         <label id="selector_label_end" for="end">end point:</label>
         <select id="end" name="end">
             <option value="510">510</option>
@@ -44,5 +47,6 @@
             
         </select>
     </div>
+    <button id="run" onclick=run()>qwertyui</button>
 </body>
 </html>
