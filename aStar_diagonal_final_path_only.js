@@ -11,7 +11,13 @@ function heuristic(nodeA, nodeB) {
   return dist(nodeA.x, nodeA.y, nodeB.x, nodeB.y);
 }
 
-
+function run(){
+  console.log(1);
+  reset();
+  loop();
+  
+  
+}
 var cols = 57; // number of colums of the grid
 var rows = 93; // number of rows of the grid
 var grid = new Array(cols);
@@ -22,17 +28,18 @@ var end;
 var w, h;
 var path = [];
 var img;
-
-function setup() {
-  var roomSet = {"501":[27, 56], "502":[40, 66], "503":[40, 47]
+var five = true;
+var roomSet = {"501":[27, 56], "502":[40, 66], "503":[40, 47]
              , "504":[40, 39], "505":[46, 32], "506":[36, 32]
              , "507":[23, 32], "508":[16, 12], "509":[16, 21]
              , "510":[16, 30], "escalator":[24, 36]};
-  var selectStartIndex = roomSet[document.getElementById("start").value]; 
-  var selectEndIndex = roomSet[document.getElementById("end").value];
-  console.log(selectStartIndex);
-  console.log(selectEndIndex);
+var selectStartIndex;
+var selectEndIndex;
 
+function setup() {
+  
+  selectStartIndex = roomSet[document.getElementById("start").value]; 
+  selectEndIndex = roomSet[document.getElementById("end").value];
 
   img = loadImage('5floor_done_75.png');
   createCanvas(1144, 1866);
@@ -48,6 +55,7 @@ function setup() {
   for (var i = 0; i < cols; i++) {
     for (var j = 0; j < rows; j++) {
       grid[i][j] = new Node(i, j);
+      grid[i][j].fiveFloor();
     }
   }
   
@@ -63,9 +71,38 @@ function setup() {
   
 
   openSet.push(start);
+  noLoop();
 }
   
-
+function reset(){
+  openSet = []; // an array contains all node that we will visit
+  closedSet = []; // an array contains all node that we have visited
+  path = [];
+  for (var i = 0; i < cols; i++) {
+    grid[i] = new Array(rows);
+  }
+  
+  // creating node for each gird
+  for (var i = 0; i < cols; i++) {
+    for (var j = 0; j < rows; j++) {
+      grid[i][j] = new Node(i, j);
+      grid[i][j].fiveFloor();
+    }
+  }
+  
+  // adding neighbors for every node
+  for (var i = 0; i < cols; i++) {
+    for (var j = 0; j < rows; j++) {
+      grid[i][j].addNeighbors(grid);
+    }
+  }
+  selectStartIndex = roomSet[document.getElementById("start").value]; 
+  selectEndIndex = roomSet[document.getElementById("end").value];
+  start = grid.at(selectStartIndex[0]).at(selectStartIndex[1]); // define the starting point
+  end = grid.at(selectEndIndex[0]).at(selectEndIndex[1]); // define the ending point
+  console.log(start);
+  openSet.push(start);
+}
 
 
 function draw() { // if will self-loopping automatically by the p5.js
@@ -125,11 +162,11 @@ function draw() { // if will self-loopping automatically by the p5.js
   background(img);
   
   // showing grid
-  for (var i = 0; i < cols; i++) {
-    for (var j = 0; j < rows; j++) {
-      grid[i][j].show_grid(color(0));
-    }
-  }
+  // for (var i = 0; i < cols; i++) {
+  //   for (var j = 0; j < rows; j++) {
+  //     grid[i][j].show_grid(color(0));
+  //   }
+  // }
   
   /*for (var i = 0; i < closedSet.length; i++) {
     closedSet[i].show(color(255, 0, 0));
