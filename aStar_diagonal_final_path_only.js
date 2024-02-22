@@ -12,11 +12,8 @@ function heuristic(nodeA, nodeB) {
 }
 
 function run(){
-  console.log(1);
   reset();
   loop();
-  
-  
 }
 var cols = 57; // number of colums of the grid
 var rows = 93; // number of rows of the grid
@@ -41,8 +38,10 @@ function setup() {
   selectStartIndex = roomSet[document.getElementById("start").value]; 
   selectEndIndex = roomSet[document.getElementById("end").value];
 
-  img = loadImage('5floor_done_75.png');
-  createCanvas(1144, 1866);
+  img = loadImage('5floor_done.png');
+  var canvas = createCanvas(500, 900);
+  var mapContainer = document.getElementById('mapcontainer');
+  canvas.parent(mapContainer);
   w = width / cols; // width of each node 
   h = height / rows; // height of each 
   
@@ -193,6 +192,9 @@ function draw() { // if will self-loopping automatically by the p5.js
     beginShape();
     for (var i = 0; i < path.length; i++) {
       vertex(path[i].x * w + w / 2, path[i].y * h + h / 2);
+      // console.log('x:'+path[i].x);
+      // console.log(', y:'+path[i].y);
+      // console.log('\n');
     }
     endShape();
     start.show_node('green');

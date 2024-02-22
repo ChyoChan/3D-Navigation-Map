@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Navigation map</title>
+        <link type="text/css" rel="stylesheet" href="style.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/addons/p5.sound.min.js"></script>
+        <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+        <script type="importmap">
+            {
+              "imports": {
+                "three": "https://unpkg.com/three@v0.153.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@v0.153.0/examples/jsm/"
+              }
+            }
+          </script>
+    </head>
+
+    <body style="cursor: auto;" onload="run()">
+        <noscript>Enable JavaScript to run this program.</noscript>
+
+        <div class="header">3D model Navigation Map</div>
+        <div class="navbar"></div>
+        <div class="container">
+          <div class="sidebar">
+              <div class="search">
+                Search
+                <br><label id="selector_label_start" for="start">From:</label>
+                <br><select id="start" name="start">
+                  <option value="501">501</option>
+                  <option value="502">502</option>
+                  <option value="503">503</option>
+                  <option value="504">504</option>
+                  <option value="505">505</option>
+                  <option value="506">506</option>
+                  <option value="507">507</option>
+                  <option value="508">508</option>
+                  <option value="509">509</option>
+                  <option value="510">510</option>
+                </select>
+                <br><label id="selector_label_end" for="end">To:</label>
+                <br><select id="end" name="end">
+                  <option value="501">501</option>
+                  <option value="502">502</option>
+                  <option value="503">503</option>
+                  <option value="504">504</option>
+                  <option value="505">505</option>
+                  <option value="506">506</option>
+                  <option value="507">507</option>
+                  <option value="508">508</option>
+                  <option value="509">509</option>
+                  <option value="510">510</option>
+                </select>
+                <br><button id="run" onclick=run()>Start</button>
+              </div>
+              <div class="legends"></div>
+          </div>
+
+          <div id="mapcontainer">
+            <button id="switchmap" type="button"> //img</button>
+              <div id="status">2D map
+              </div>
+          </div>
+
+        </div>
+        <script src="Node.js"></script>
+        <script src="aStar_diagonal_final_path_only.js"></script>
+        <script type="module" src="./map.js"></script>
+    </body>
+</html>
