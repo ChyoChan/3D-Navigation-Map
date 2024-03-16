@@ -27,8 +27,10 @@
           <div class="sidebar">
               <div class="search">
                 Search
-                <br><label id="selector_label_start" for="start">From:</label>
-                <br><select id="start" name="start">
+                <br><input id='start_input' name="start" list="startIn" value="601"> 
+                <label id="selector_label_start" for="startIn">From:</label>
+                <br>
+                <datalist id="startIn">
                   <option value="501">501</option>
                   <option value="502">502</option>
                   <option value="503">503</option>
@@ -39,9 +41,17 @@
                   <option value="508">508</option>
                   <option value="509">509</option>
                   <option value="510">510</option>
-                </select>
+                  <option value="601">601</option>
+                  <option value="602">602</option>
+                  <option value="escalator">escalator</option>
+                  <!-- <option value="floor6">floor6</option> -->
+
+
+                </datalist>
+
+                <br><input id='end_input' name="end" list="endIn" value="602"> 
                 <br><label id="selector_label_end" for="end">To:</label>
-                <br><select id="end" name="end">
+                <br><datalist id="endIn" name="end">
                   <option value="501">501</option>
                   <option value="502">502</option>
                   <option value="503">503</option>
@@ -52,10 +62,18 @@
                   <option value="508">508</option>
                   <option value="509">509</option>
                   <option value="510">510</option>
-                </select>
+                  <option value="601">601</option>
+                  <option value="602">602</option>
+                  <option value="escalator">escalator</option>
+                  
+                </datalist>
                 <br><button id="run" onclick=run()>Start</button>
               </div>
-              <div class="legends"></div>
+              
+              <div class="legends">
+                <button id="map_5f">5F</button>
+                <button id="map_6f">6F</button>
+              </div>
           </div>
 
           <div id="mapcontainer">
