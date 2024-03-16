@@ -8,18 +8,67 @@ function Node(x ,y){
     this.previous = undefined; // declare the previous node 
     this.obstacles = false; // declare the obstacles
     this.room = undefined;
-    this.fiveFloor = function(){
-      if (x >= 18 && y <= 11) {
-        this.obstacles = true;
+
+    this.delObstacles = function(){
+      if (x>=0 && y>=0)
+        this.obstacles = flase
     }
 
-    if (y >=3 && y <=40) { // left rect
-      if (x >=2 && x <=15) {
+    this.fiveFloor = function(){
+
+      if (x>=0 && y>=0){
+      this.obstacles = true;
+      }
+
+      if (x==18 && y>=12){ // for first col road 
+        this.obstacles = false;
+      }
+
+      if ((x==16 || x==17) && (y==12 || y==21 || y==30)){ // for 508, 509 and 510
+            this.obstacles = false;
+      }
+
+      if (x>=18 && x<= 46 && y==36){ // for first row road
+        this.obstacles = false
+      }
+
+      if ((x==23 || x==36 || x==46) & (y>=32 && y<=35)){ // for 507, 506 and 505
+        this.obstacles = false
+      }
+
+      if (x==38 && y>=36){ // for the second col road
+        this.obstacles = false;
+      }
+
+      if ((x==39 || x==40) && (y==39 || y==47 || y==66)){ // for 504, 503 and 502
+        this.obstacles = false;
+      }
+
+      if (x>=18 && x<=38 && y==55){ // for second row road
+        this.obstacles = false;
+      }
+
+      if (x==27 && y==56){ // for 501
+        this.obstacles = false;
+      }
+
+      if ((x==23 || x==24) && y==37){
+        this.obstacles = false;
+      }
+    }
+
+    this.sixFloor = function(){
+
+
+    if (y >=0 && y <=40) { // left rect
+      if (x >=0 && x <=15) {
         this.obstacles = true;
-      } else if (x == 16 && y >= 32) {
+      } else if (x == 16 && y >= 31) {
         this.obstacles = true;
-      } 
+      }
     } 
+
+
   
     if (x >= 5 && x <= 16 && y >=41 && y <=51) { // left mid rect
         this.obstacles = true;
@@ -29,7 +78,7 @@ function Node(x ,y){
         this.obstacles = true;
     } 
     
-    if (x >= 21) { // mid top & bottom rect
+    if (x >= 19) { // mid top & bottom rect
       if (y <= 31){
         this.obstacles = true;
       } else if (y==32) {
@@ -81,10 +130,11 @@ function Node(x ,y){
     
     this.show_grid = function(color){
       fill(0, 0, 0, 0);
-      if (this.obstacles){
-        fill(0, 255, 255, 0);
-      }
       stroke(color);
+      if (this.obstacles){
+        fill(255, 255, 255, 1);
+        stroke("lightblue")
+      }
       rect(this.x*w, this.y*h, w - 1, h - 1);
     }
     
@@ -92,7 +142,7 @@ function Node(x ,y){
       fill(color);
       noStroke();
       ellipse(this.x*w + w / 2, this.y*h + h / 2, w, w);
-      //rect(this.x*w, this.y*h, w - 1, h - 1);
+      // rect(this.x*w, this.y*h, w - 1, h - 1);
     }
   
     // adding neighbor of each node
