@@ -31,7 +31,6 @@ var endIn;
 
 function preload(){
   img5f = loadImage('5floor_done_75.png');
-  // img6f = loadImage("6Floor_done_75.png");
   img6f = loadImage("6Floor_done.png");
 }
 
@@ -41,24 +40,36 @@ function run(){
   loop();
 }
 
-// change to 5floor 2d map
+// change to 5floor 2d map and find the path
 function turn5f(){
   current_floor = "img5f";
   current_f = img5f
   image(current_f,0,0,width,height);
-  reset();
-  redraw();
-
+  run();
 }
 
-// change to 6floor 2d map
+// change to 6floor 2d map and find the path
 function turn6f(){
   current_floor = "img6f";
   current_f = img6f
   image(current_f,0,0,width,height);
-  reset();
-  redraw();
+  run();
+}
 
+// change to 5floor 2d map and show only
+function swap5f(){
+  current_floor = "img5f";
+  current_f = img5f
+  image(current_f,0,0,width,height);
+  res_et();
+}
+
+// change to 6floor 2d map and show only
+function swap6f(){
+  current_floor = "img6f";
+  current_f = img6f
+  image(current_f,0,0,width,height);
+  re_set();
 }
 
 function removeFromArray(arr, elt) {
@@ -76,11 +87,18 @@ function heuristic(nodeA, nodeB) {
 
 function setup() {
   
-  const fiveFloorBtn = select("#map_5f");
-  const sixFloorBtn = select("#map_6f");
+  const fiveFloorArrow = select("#map_5f");
+  const sixFloorArrow= select("#map_6f");
 
-  fiveFloorBtn.mousePressed(turn5f); // if 5F button is clicked
-  sixFloorBtn.mousePressed(turn6f); // if 6F button is clicked 
+  const fiveFloorBtn = select("#map_5f_swap");
+  const sixFloorBtn = select("#map_6f_swap");
+
+  fiveFloorArrow.mousePressed(turn5f); // if 5F button is clicked
+  sixFloorArrow.mousePressed(turn6f); // if 6F button is clicked 
+
+  fiveFloorBtn.mousePressed(swap5f); // if 5F button is clicked
+  sixFloorBtn.mousePressed(swap6f); // if 5F button is clicked
+
 
   selectStartIndex = fiveFroomSet[document.getElementById("start_input").value]; 
   selectEndIndex = fiveFroomSet[document.getElementById("end_input").value];
@@ -120,8 +138,8 @@ function setup() {
   openSet.push(start);
   noLoop();
 }
-  
-function reset(){
+
+function re_set(){
   openSet = []; // an array contains all node that we will visit
   closedSet = []; // an array contains all node that we have visited
   path = [];
@@ -149,15 +167,24 @@ function reset(){
       grid[i][j].addNeighbors(grid);
     }
   }
+}
+  
+function reset(){
+  re_set();
+  
+  // adding neighbors for every node
+  for (var i = 0; i < cols; i++) {
+    for (var j = 0; j < rows; j++) {
+      grid[i][j].addNeighbors(grid);
+    }
+  }
   startIn = document.getElementById("start_input").value; 
   endIn = document.getElementById("end_input").value; 
 
   if ((startIn in fiveFroomSet || startIn in sixFroomSet) && (endIn in fiveFroomSet || endIn in sixFroomSet)){ // check the input value
     if (current_floor == "img5f"){ // user stay on 5F
       if (startIn in sixFroomSet && endIn in sixFroomSet) { // 6xx to 6xx
-        // still need to do
-        selectStartIndex = fiveFroomSet["escalator"]; 
-        selectEndIndex = fiveFroomSet["escalator"];
+        turn6f();
 
       }else if (endIn in sixFroomSet){ // 5xx to 6xx
         selectStartIndex = fiveFroomSet[startIn]; 
@@ -174,9 +201,7 @@ function reset(){
       }
     }else if (current_floor =="img6f"){ // user stay on 6F
       if (startIn in fiveFroomSet && endIn in fiveFroomSet){ // 5xx to 5xx
-        // still need to do
-        selectStartIndex = sixFroomSet["escalator"]; 
-        selectEndIndex = sixFroomSet["escalator"];
+        turn5f();
 
       }else if (endIn in fiveFroomSet){ // 6xx to 5xx
         selectStartIndex = sixFroomSet[startIn]; 
@@ -202,7 +227,9 @@ function reset(){
 
   start = grid.at(selectStartIndex[0]).at(selectStartIndex[1]); // define the starting point
   end = grid.at(selectEndIndex[0]).at(selectEndIndex[1]); // define the ending point
+
   console.log(start);
+  console.log(end)
   openSet.push(start);
 }
 
