@@ -1,6 +1,8 @@
-let scale = 1;
-let canvasWidth = 500;
-let canvasHeight = 900;
+let scales = 1;
+let canvasWidth = 1000;
+let canvasHeight = 1800;
+var a = 0;
+var b = 0;
 var cols = 57; // number of colums of the grid
 var rows = 93; // number of rows of the grid
 var grid = new Array(cols);
@@ -13,7 +15,10 @@ var path = [];
 var img5f;
 var img6f;
 var wrongFloor;
-var five = true;
+const controls = {
+	view: {x: 0, y: 0, zoom: 1},
+	viewPos: { prevX: null,  prevY: null,  isDragging: false },
+  }
 var roomSet = {
 	"501": [27, 56], "502": [40, 66], "503": [40, 47]
 	, "504": [40, 39], "505": [46, 32], "506": [36, 32]
@@ -50,7 +55,6 @@ function turn5f() {
 	current_floor = "5f";
 	current_image = img5f;
 	autoturn = false;
-	image(current_image, 0, 0, width, height);
 	reset();
 	loop();
 
@@ -60,8 +64,7 @@ function turn5f() {
 function turn6f() {
 	current_floor = "6f";
 	current_image = img6f;
-	autoturn = false;
-	image(current_image, 0, 0, width, height);
+	autoturn = false;	
 	reset();
 	loop();
 }
@@ -86,6 +89,7 @@ function setup() {
 	sixFloorBtn.mousePressed(turn6f); // if 6F button is clicked 
 
 	var canvas = createCanvas(canvasWidth, canvasHeight);
+	canvas.mouseWheel(e => Controls.zoom(controls).worldZoom(e))
 	current_image = img5f;
 	current_floor = "5f"
 
@@ -188,8 +192,10 @@ function reset() {
 		noLoop();
 	}
 }
+	
+function draw() { // if will self-loopping automatically by the p5.jsxs
+	background(0);
 
-function draw() { // if will self-loopping automatically by the p5.js
 	var displayPath = false;
 	if (wrongFloor) {
 		console.log("not useful")
@@ -241,10 +247,10 @@ function draw() { // if will self-loopping automatically by the p5.js
 
 			}
 		}
-		image(current_image, 0, 0, width, height);
+		image(current_image, a, b, width, height);
 	} else {
 		console.log('no solution');
-		image(current_image, 0, 0, width, height);
+		image(current_image, a, b, width, height);
 		noLoop();
 		return;
 	}
@@ -253,11 +259,11 @@ function draw() { // if will self-loopping automatically by the p5.js
 	h = height / rows;
 
 	// showing grid
-	// for (var i = 0; i < cols; i++) {
-	//    for (var j = 0; j < rows; j++) {
-	//      grid[i][j].show_grid(color(0));
-	//    }
-	// }
+	for (var i = 0; i < cols; i++) {
+	   for (var j = 0; j < rows; j++) {
+	     grid[i][j].show_grid(color(0));
+	   }
+	}
 
 	path = [];
 	var temp = current;
@@ -288,19 +294,19 @@ function draw() { // if will self-loopping automatically by the p5.js
 
 // zoomin and out 
 function zoomin() {
-	scale = 1;
-	scale *= 1.05;
-	canvasWidth *= scale;
-	canvasHeight *= scale;
+	scales = 1;
+	scales *= 1.05;
+	canvasWidth *= scales;
+	canvasHeight *= scales;
 	resizeCanvas(canvasWidth, canvasHeight);
 	reset();
 	loop();
 };
 function zoomout() {
-	scale = 1;
-	scale *= 0.95;
-	canvasWidth *= scale;
-	canvasHeight *= scale;
+	scales = 1;
+	scales *= 0.95;
+	canvasWidth *= scales;
+	canvasHeight *= scales;
 	resizeCanvas(canvasWidth, canvasHeight);
 	reset();
 	loop();
