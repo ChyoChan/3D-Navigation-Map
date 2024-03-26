@@ -35,8 +35,8 @@ var roomNum_End;
 var autoturn = false;
 
 function preload() {
-	img5f = loadImage('5floor_done_75.png');
-	img6f = loadImage("6Floor_done_75.png");
+	img5f = loadImage('map/5floor_done_75.png');
+	img6f = loadImage("map/6Floor_done_75.png");
 }
 
 function run() {

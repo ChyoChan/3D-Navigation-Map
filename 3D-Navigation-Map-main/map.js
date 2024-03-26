@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
@@ -57,12 +58,14 @@ shpere.position.set(0, 0, 0);
 
 // Load 3D model
 function init(){
-    const loader = new GLTFLoader().setPath('test/');
-    loader.load('56floor_Angus_Version.glb', function(gltf) { // load the 3D map to the scene
+
+    const loader = new GLTFLoader().setPath('map/');
+
+    loader.load('56floor_Angus.gltf', function(gltf) { // load the 3D map to the scene
         const mesh = gltf.scene; // the object of the map
         mesh.position.set(0,0, 0); // set position of the map
         scene.add(mesh); // add the map to the scene 
-
+        console.log(1)
         const ambientLight = new THREE.AmbientLight(0x404040);
         scene.add(ambientLight);
         const pointLight = new THREE.PointLight(0xffffff, 1, 100);
