@@ -50,7 +50,7 @@ scene.add(group);
 
 
 // set a shpere in the origin
-const Oct = new THREE.OctahedronGeometry(0.4, 0);
+const Triangle = new THREE.ConeGeometry(0.3, 0.9, 3);
 const circle = new THREE.SphereGeometry(0.2, 64, 32);
 const Rmaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const Gmaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -250,22 +250,24 @@ function displaythreeDpath() {
 
         if (i == 0) {
             material = Rmaterial;
-            obj = new THREE.Mesh(Oct, material);
+            obj = new THREE.Mesh(Triangle, material);
             scene.add(obj);
-            obj.position.set(Xcod, Ycod+2, Zcod);
+            obj.rotateX(Math.PI);
+            obj.position.set(Xcod, Ycod+2.5, Zcod);
             threeDPath.push(obj);
         }
         else if (i == path.length - 1) {
             material = Gmaterial;
-            obj = new THREE.Mesh(Oct, material);
+            obj = new THREE.Mesh(Triangle, material);
             scene.add(obj);
-            obj.position.set(Xcod, Ycod+2, Zcod);
+            obj.rotateX(Math.PI);
+            obj.position.set(Xcod, Ycod+2.5, Zcod);
             threeDPath.push(obj);
         }
         else {
             material = Bmaterial;
         }
-        
+
         obj = new THREE.Mesh(circle, material);
         scene.add(obj);
         obj.position.set(Xcod, Ycod, Zcod);
