@@ -110,7 +110,14 @@ canvas {
     padding-top: 8px;
     display: flex;
 }
-
+#test{
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    color: red;
+}
 #floor5 button {
     background-size: cover;
     cursor: pointer;

@@ -101,6 +101,7 @@ function setup() {
 }
 
 function reset() {
+	grid[10][10]
 	wrongFloor = false;
 	openSet = []; // an array contains all node that we will visit
 	closedSet = []; // an array contains all node that we have visited
@@ -195,7 +196,7 @@ function reset() {
 	
 function draw() { // if will self-loopping automatically by the p5.jsxs
 	background(0);
-
+	
 	var displayPath = false;
 	if (wrongFloor) {
 		console.log("not useful")

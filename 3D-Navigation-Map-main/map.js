@@ -29,7 +29,7 @@ renderer.setClearColor(0xeeeeee); //set default color when no model in the scene
 renderer.setPixelRatio(window.devicePixelRatio); //set ratio to different device
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
 var controls = new PointerLockControls(camera, threeDContainer);
 const controllerCamera = controls.getObject();
 
@@ -61,12 +61,12 @@ function init(){
 
     const loader = new GLTFLoader().setPath('map/');
 
-    loader.load('56floor_Angus.gltf', function(gltf) { // load the 3D map to the scene
+    loader.load('56_4.0.gltf', function(gltf) { // load the 3D map to the scene
         const mesh = gltf.scene; // the object of the map
         mesh.position.set(0,0, 0); // set position of the map
         scene.add(mesh); // add the map to the scene 
-        console.log(1)
-        const ambientLight = new THREE.AmbientLight(0x404040);
+
+        const ambientLight = new THREE.AmbientLight(0x707070, 1);
         scene.add(ambientLight);
         const pointLight = new THREE.PointLight(0xffffff, 1, 100);
         pointLight.position.set(0,50,0);
@@ -84,7 +84,7 @@ function init(){
 
 // Controller 
 function PLControls(){
-    controllerCamera.position.set(0, 30, 0); // set position of the camera 
+    controllerCamera.position.set(0, 5, 0); // set position of the camera 
     controls.getObject().lookAt(25, 0, -30); // look at the maps
     scene.add(controllerCamera);
     
@@ -167,12 +167,12 @@ function check(){
         // rotation.copy(controllerCamera.getWorldDirection().multiply(new THREE.Vector3(-1, 0 ,-1)));
         // rotation.applyMatrix4(new THREE.Matrix4());
         
-        if(moveForward) velocity.z -= 400.0 * delta;
-        if(moveBackward) velocity.z -= -400.0 * delta;
-        if(moveLeft) velocity.x -= 400.0 * delta;
-        if(moveRight) velocity.x -= -400.0 * delta;
-        if(moveUp) velocity.y -= -400.0 * delta;
-        if(moveDown) velocity.y -= 400.0 * delta;
+        if(moveForward) velocity.z -= 100.0 * delta;
+        if(moveBackward) velocity.z -= -100.0 * delta;
+        if(moveLeft) velocity.x -= 100.0 * delta;
+        if(moveRight) velocity.x -= -100.0 * delta;
+        if(moveUp) velocity.y -= -100.0 * delta;
+        if(moveDown) velocity.y -= 100.0 * delta;
         
         controls.getObject().translateX(velocity.x * delta); // update the x-axis of camera
         controls.getObject().translateY(velocity.y * delta); // update the y-axis of camera
