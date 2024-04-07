@@ -29,7 +29,7 @@
           Search Path
         </div>
         <br>From:
-        <br><input id='start_input' name="start" list="startIn" value="502">
+        <br><input id='start_input' name="start" list="startIn">
         <label id="selector_label_start" for="startIn"></label>
         <br><datalist id="startIn">
           <option value="501">501</option>
@@ -55,10 +55,11 @@
           <option value="Male Toilet">Male Toilet</option>
           <option value="Female Toilet">Female Toilet</option>
           <option value="Elevator">Elevator</option>
+          <option value="Escalator">Escalator</option>
         </datalist>
 
         <br>To:
-        <br><input id='end_input' name="end" list="endIn" value="501">
+        <br><input id='end_input' name="end" list="endIn">
         <br><label id="selector_label_end" for="end"></label>
         <br><datalist id="endIn" name="end">
           <option value="501">501</option>
@@ -85,6 +86,7 @@
           <option value="Female Toilet">Female Toilet</option>
           <option value="Accessible Toilet">Accessible Toilet</option>
           <option value="Elevator">Elevator</option>
+          <option value="Escalator">Escalator</option>
 
         </datalist>
         <button id="run" onclick=run()>Start</button>
@@ -163,8 +165,8 @@
     </div>
   </div>
   <script src="Node.js"></script>
-  <script src="aStar_diagonal_final_path_only.js"></script>
   <script type="module" src="./map.js"></script>
+  <script src="aStar_diagonal_final_path_only.js"></script>
 </body>
 
 </html>

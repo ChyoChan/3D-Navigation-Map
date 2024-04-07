@@ -15,6 +15,7 @@ var path = [];
 var img5f;
 var img6f;
 var wrongFloor;
+let displayPath = false;
 const controls = {
 	view: {x: 0, y: 0, zoom: 1},
 	viewPos: { prevX: null,  prevY: null,  isDragging: false },
@@ -22,11 +23,11 @@ const controls = {
 var roomSet = {
 	"501": [27, 56], "502": [40, 66], "503": [40, 47]
 	, "504": [40, 39], "505": [46, 32], "506": [36, 32]
-	, "507": [23, 32], "508": [16, 12], "509": [16, 21]
+	, "507": [23, 32], "508": [16, 12], "509": [16, 20]
 	, "510": [16, 30], "601": [27, 56], "602": [40, 66]
 	, "603": [40, 47], "604": [40, 39], "605": [46, 32]
 	, "606": [36, 32], "607": [23, 32], "608": [16, 12]
-	, "609": [16, 21], "610": [16, 30], "Escalator": [24, 36]
+	, "609": [16, 20], "610": [16, 30], "Escalator": [23, 37]
 	, "Accessible Toilet": [17, 37], "Male Toilet": [17, 34]
 	, "Female Toilet": [17, 40], "Elevator": [10, 52]
 };
@@ -101,7 +102,6 @@ function setup() {
 }
 
 function reset() {
-	grid[10][10]
 	wrongFloor = false;
 	openSet = []; // an array contains all node that we will visit
 	closedSet = []; // an array contains all node that we have visited
@@ -197,7 +197,7 @@ function reset() {
 function draw() { // if will self-loopping automatically by the p5.jsxs
 	background(0);
 	
-	var displayPath = false;
+	displayPath = false;
 	if (wrongFloor) {
 		console.log("not useful")
 		noLoop();

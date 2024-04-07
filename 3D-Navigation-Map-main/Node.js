@@ -24,19 +24,19 @@ function Node(x, y) {
 			this.obstacles = false;
 		}
 
-		if ((x == 16 || x == 17) && (y == 12 || y == 21 || y == 30)) { // for 508, 509 and 510
+		if ((x == 16 || x == 17) && (y == 12 || y == 20 || y == 30)) { // for 508, 509 and 510
 			this.obstacles = false;
 		}
 
-		if (x >= 18 && x <= 46 && y == 36) { // for first row road
+		if (x >= 18 && x <= 46 && y == 34) { // for first row road
 			this.obstacles = false
 		}
 
-		if ((x == 23 || x == 36 || x == 46) & (y >= 32 && y <= 35)) { // for 507, 506 and 505
+		if ((x == 23 || x == 36 || x == 46) & (y >= 32 && y <= 34)) { // for 507, 506 and 505
 			this.obstacles = false
 		}
 
-		if (x == 38 && y >= 36) { // for the second col road
+		if (x == 38 && y >= 35) { // for the second col road
 			this.obstacles = false;
 		}
 
@@ -47,7 +47,9 @@ function Node(x, y) {
 		if (x >= 18 && x <= 38 && y == 55) { // for second row road
 			this.obstacles = false;
 		}
-
+		if (x == 23 & (y == 35 || y == 36)){
+			this.obstacles = false;
+		}
 		if (x == 27 && y == 56) { // for 501
 			this.obstacles = false;
 		}
@@ -74,19 +76,19 @@ function Node(x, y) {
 			this.obstacles = false;
 		}
 
-		if ((x == 16 || x == 17) && (y == 12 || y == 21 || y == 30)) { // for 508, 509 and 510
+		if ((x == 16 || x == 17) && (y == 12 || y == 20 || y == 30)) { // for 508, 509 and 510
 			this.obstacles = false;
 		}
 
-		if (x >= 18 && x <= 46 && y == 36) { // for first row road
+		if (x >= 18 && x <= 46 && y == 34) { // for first row road
 			this.obstacles = false
 		}
 
-		if ((x == 23 || x == 36 || x == 46) & (y >= 32 && y <= 35)) { // for 507, 506 and 505
+		if ((x == 23 || x == 36 || x == 46) & (y >= 32 && y <= 34)) { // for 507, 506 and 505
 			this.obstacles = false
 		}
 
-		if (x == 38 && y >= 36) { // for the second col road
+		if (x == 38 && y >= 35) { // for the second col road
 			this.obstacles = false;
 		}
 
@@ -97,7 +99,9 @@ function Node(x, y) {
 		if (x >= 18 && x <= 38 && y == 55) { // for second row road
 			this.obstacles = false;
 		}
-
+		if (x == 23 & (y == 35 || y == 36)){
+			this.obstacles = false;
+		}
 		if (x == 27 && y == 56) { // for 501
 			this.obstacles = false;
 		}
@@ -109,6 +113,9 @@ function Node(x, y) {
 			this.obstacles = false;
 		}
 		if (x >= 10 && x <=18 && y == 52){
+			this.obstacles = false;
+		}
+		if ((x >= 14 && x <= 18 && y == 55) || (x == 14 && y == 56)){
 			this.obstacles = false;
 		}
 	}

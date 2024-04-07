@@ -7,6 +7,7 @@ var clock = new THREE.Clock();
 
 const threeDContainer = document.getElementById('threedmodel');
 
+let threeDPath = [];
 var moveForward = false;
 var moveBackward = false;
 var moveLeft = false;
@@ -33,7 +34,7 @@ const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerH
 var controls = new PointerLockControls(camera, threeDContainer);
 const controllerCamera = controls.getObject();
 
-scene.add(new THREE.GridHelper(100,100));
+scene.add(new THREE.GridHelper(100, 100));
 scene.add(new THREE.AxesHelper(5));
 
 
@@ -47,48 +48,51 @@ group.add(yAxis);
 group.add(zAxis);
 scene.add(group);
 
+
 // set a shpere in the origin
-const circle = new THREE.SphereGeometry(0.3, 64, 32);
-const material = new THREE.MeshBasicMaterial( {color: 0xff0000});
-const shpere = new THREE.Mesh(circle, material);
+const Oct = new THREE.OctahedronGeometry(0.4, 0);
+const circle = new THREE.SphereGeometry(0.2, 64, 32);
+const Rmaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const Gmaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const Bmaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+var shpere = new THREE.Mesh(circle, Rmaterial);
 scene.add(shpere);
 shpere.position.set(0, 0, 0);
 
 
 
 // Load 3D model
-function init(){
+function init() {
 
     const loader = new GLTFLoader().setPath('map/');
 
-    loader.load('56_4.0.gltf', function(gltf) { // load the 3D map to the scene
+    loader.load('56_5.0.gltf', function (gltf) { // load the 3D map to the scene
         const mesh = gltf.scene; // the object of the map
-        mesh.position.set(0,0, 0); // set position of the map
+        mesh.position.set(0, 0, 0); // set position of the map
         scene.add(mesh); // add the map to the scene 
 
         const ambientLight = new THREE.AmbientLight(0x707070, 1);
         scene.add(ambientLight);
         const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-        pointLight.position.set(0,50,0);
+        pointLight.position.set(0, 50, 0);
         scene.add(pointLight);
-    },function ( xhr ) {
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-	},
-	// called when loading has errors
-	function ( error ) {
-		console.log( 'An error happened' );
-	} );
+    }, function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+        // called when loading has errors
+        function (error) {
+            console.log('An error happened');
+        });
     document.getElementById("threedmodel").appendChild(renderer.domElement);
     PLControls();
 }
-
 // Controller 
-function PLControls(){
-    controllerCamera.position.set(0, 5, 0); // set position of the camera 
-    controls.getObject().lookAt(25, 0, -30); // look at the maps
+function PLControls() {
+    controllerCamera.position.set(24, 40, 36); // set position of the camera 
+    controls.getObject().lookAt(24, 0, 36); // look at the maps
     scene.add(controllerCamera);
-    
-    threeDContainer.addEventListener('click', () => {controls.lock();}, false); // click to lick the mouse in the scene
+
+    threeDContainer.addEventListener('click', () => { controls.lock(); }, false); // click to lick the mouse in the scene
 
     const onKeyDown = function (event) {
         switch (event.code) {
@@ -98,7 +102,7 @@ function PLControls(){
                 break;
             case 'ArrowLeft':
             case 'KeyA':
-                moveLeft = true;                                                                                                                     
+                moveLeft = true;
                 break;
             case 'ArrowDown':
             case 'KeyS':
@@ -116,9 +120,9 @@ function PLControls(){
                 break;
         }
     };
-    
-    const onKeyUp = function(event) {
-        switch(event.code) {
+
+    const onKeyUp = function (event) {
+        switch (event.code) {
             case 'ArrowUp':
             case 'KeyW':
                 moveForward = false;
@@ -147,7 +151,7 @@ function PLControls(){
     document.addEventListener('keyup', onKeyUp, false);
 }
 var i = 0;
-function check(){
+function check() {
     if (controls.isLocked === true) {
         var delta = clock.getDelta(); // refresh time
         velocity.x -= velocity.x * 10.0 * delta;
@@ -166,18 +170,18 @@ function check(){
         // i ++;
         // rotation.copy(controllerCamera.getWorldDirection().multiply(new THREE.Vector3(-1, 0 ,-1)));
         // rotation.applyMatrix4(new THREE.Matrix4());
-        
-        if(moveForward) velocity.z -= 100.0 * delta;
-        if(moveBackward) velocity.z -= -100.0 * delta;
-        if(moveLeft) velocity.x -= 100.0 * delta;
-        if(moveRight) velocity.x -= -100.0 * delta;
-        if(moveUp) velocity.y -= -100.0 * delta;
-        if(moveDown) velocity.y -= 100.0 * delta;
-        
+
+        if (moveForward) velocity.z -= 100.0 * delta;
+        if (moveBackward) velocity.z -= -100.0 * delta;
+        if (moveLeft) velocity.x -= 100.0 * delta;
+        if (moveRight) velocity.x -= -100.0 * delta;
+        if (moveUp) velocity.y -= -100.0 * delta;
+        if (moveDown) velocity.y -= 100.0 * delta;
+
         controls.getObject().translateX(velocity.x * delta); // update the x-axis of camera
         controls.getObject().translateY(velocity.y * delta); // update the y-axis of camera
         controls.getObject().translateZ(velocity.z * delta); // update the z-axis of camera
-        
+
 
         // if (controls.getObject().position.y < -100) {
         //     velocity.y = 0;
@@ -189,14 +193,18 @@ function check(){
 
 // Render the scene
 function render() {
+    if (displayPath) {
+        displaythreeDpath();
+        displayPath = false;
+    }
     requestAnimationFrame(render);
     check();
     renderer.render(scene, camera);
 };
 
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function () {
     function switchmap() {
-        document.getElementById("switchmap").addEventListener("click", function(){
+        document.getElementById("switchmap").addEventListener("click", function () {
             document.getElementById("threedcontainer").style.visibility = 'visible';
             document.getElementById("twodmapcontainer").style.visibility = 'hidden';
             init();
@@ -204,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     }
     function switchtwod() {
-        document.getElementById("switch2d").addEventListener("click", function(){
+        document.getElementById("switch2d").addEventListener("click", function () {
             document.getElementById("twodmapcontainer").style.visibility = 'visible';
             document.getElementById("threedcontainer").style.visibility = 'hidden';
         });
@@ -214,8 +222,53 @@ document.addEventListener("DOMContentLoaded", function(){
 })
 
 // Resize window
-window.addEventListener('resize', function() {
+window.addEventListener('resize', function () {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 })
+
+function displaythreeDpath() {
+    var Xcod;
+    var Zcod;
+    var obj;
+    var Ycod;
+    var material;
+    for (var i = 0; i < threeDPath.length; i++) {
+        scene.remove(threeDPath[i]);
+    }
+    if (roomNum_Start[0] == roomNum_End[0]) {
+        Ycod = (roomNum_Start[0] == '5') ? -0.4 : 4.9;
+    }
+    camera.position.set(roomSet[roomNum_Start][0], Ycod + 1, roomSet[roomNum_Start][1]);
+
+    controls.getObject().lookAt(24, Ycod, 36);
+
+    for (var i = path.length - 1; i >= 0; i--) {
+        Xcod = path[i].x;
+        Zcod = path[i].y;
+
+        if (i == 0) {
+            material = Rmaterial;
+            obj = new THREE.Mesh(Oct, material);
+            scene.add(obj);
+            obj.position.set(Xcod, Ycod+2, Zcod);
+            threeDPath.push(obj);
+        }
+        else if (i == path.length - 1) {
+            material = Gmaterial;
+            obj = new THREE.Mesh(Oct, material);
+            scene.add(obj);
+            obj.position.set(Xcod, Ycod+2, Zcod);
+            threeDPath.push(obj);
+        }
+        else {
+            material = Bmaterial;
+        }
+        
+        obj = new THREE.Mesh(circle, material);
+        scene.add(obj);
+        obj.position.set(Xcod, Ycod, Zcod);
+        threeDPath.push(obj);
+    }
+}
