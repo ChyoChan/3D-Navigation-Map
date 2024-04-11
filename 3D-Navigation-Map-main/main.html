@@ -19,7 +19,7 @@
   </script>
 </head>
 
-<body>
+<body onload="hidebox()">
   <div class="header">HKU SPACE 3D model Navigation Map</div>
   <div class="navbar"></div>
   <div class="container">
@@ -28,8 +28,11 @@
         <div id="searchword">
           Search Path
         </div>
-        <br>From:
-        <br><input id='start_input' name="start" list="startIn">
+        <div id="box">
+            <div id="fromcircle"></div>
+            <div id="word">From :</div>
+        </div>
+        <input id='start_input' name="start" list="startIn">
         <label id="selector_label_start" for="startIn"></label>
         <br><datalist id="startIn">
           <option value="501">501</option>
@@ -58,8 +61,11 @@
           <option value="Escalator">Escalator</option>
         </datalist>
 
-        <br>To:
-        <br><input id='end_input' name="end" list="endIn">
+        <div id="box">
+            <div id="tocircle"></div>
+            <div id="word">To :</div>
+        </div>
+        <input id='end_input' name="end" list="endIn">
         <br><label id="selector_label_end" for="end"></label>
         <br><datalist id="endIn" name="end">
           <option value="501">501</option>
@@ -90,7 +96,6 @@
 
         </datalist>
         <button id="run" onclick=run()>Start</button>
-        <p id="errormessage"></p>
       </div>
       <div class="legends">
         <div id="legendword">
@@ -131,6 +136,7 @@
 
     <div id="mapcontainer">
       <div id="twodmapcontainer">
+        <div id="errormessage"></div>
         <div id="floorcontainer">
           <div id="floor">
             Floor

@@ -47,14 +47,8 @@ function Node(x, y) {
 		if (x >= 18 && x <= 38 && y == 55) { // for second row road
 			this.obstacles = false;
 		}
-		if (x == 23 & (y == 35 || y == 36)){
-			this.obstacles = false;
-		}
-		if (x == 27 && y == 56) { // for 501
-			this.obstacles = false;
-		}
 
-		if ((x == 23 || x == 24) && y == 37) {
+		if (x == 27 && y >= 52 && y <= 56) { // for 501
 			this.obstacles = false;
 		}
 		if (x == 17 && (y == 34 || y == 40 || y == 37)){

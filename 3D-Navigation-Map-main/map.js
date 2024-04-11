@@ -55,10 +55,6 @@ const circle = new THREE.SphereGeometry(0.2, 64, 32);
 const Rmaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const Gmaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 const Bmaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-var shpere = new THREE.Mesh(circle, Rmaterial);
-scene.add(shpere);
-shpere.position.set(0, 0, 0);
-
 
 
 // Load 3D model
@@ -88,8 +84,8 @@ function init() {
 }
 // Controller 
 function PLControls() {
-    controllerCamera.position.set(24, 40, 36); // set position of the camera 
-    controls.getObject().lookAt(24, 0, 36); // look at the maps
+    controllerCamera.position.set(30, 15, 36); // set position of the camera 
+    controls.getObject().lookAt(26, 9, 36); // look at the maps
     scene.add(controllerCamera);
 
     threeDContainer.addEventListener('click', () => { controls.lock(); }, false); // click to lick the mouse in the scene
@@ -193,14 +189,12 @@ function check() {
 
 // Render the scene
 function render() {
-    if (displayPath) {
-        displaythreeDpath();
-        displayPath = false;
-    }
     requestAnimationFrame(render);
     check();
     renderer.render(scene, camera);
 };
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
     function switchmap() {
@@ -209,12 +203,14 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("twodmapcontainer").style.visibility = 'hidden';
             init();
             render();
+            threeDActive = true;
         });
     }
     function switchtwod() {
         document.getElementById("switch2d").addEventListener("click", function () {
             document.getElementById("twodmapcontainer").style.visibility = 'visible';
             document.getElementById("threedcontainer").style.visibility = 'hidden';
+            threeDActive = false;
         });
     }
     switchmap();
@@ -228,49 +224,89 @@ window.addEventListener('resize', function () {
     renderer.setSize(window.innerWidth, window.innerHeight);
 })
 
-function displaythreeDpath() {
+
+
+
+
+displaythreeDpath = function() {
     var Xcod;
     var Zcod;
     var obj;
     var Ycod;
     var material;
-    for (var i = 0; i < threeDPath.length; i++) {
-        scene.remove(threeDPath[i]);
+    var EY = 5.4;
+    var EX = 23;
+    var Eshpere;
+    if (done) {
+        for (var i = 0; i < threeDPath.length; i++) {
+            scene.remove(threeDPath[i]);
+        }
     }
-    if (roomNum_Start[0] == roomNum_End[0]) {
-        Ycod = (roomNum_Start[0] == '5') ? -0.4 : 4.9;
-    }
-    camera.position.set(roomSet[roomNum_Start][0], Ycod + 1, roomSet[roomNum_Start][1]);
+    done = false
+    if (!sameFloor) {
+        for (var Z = 38; Z < 52; Z++) {
 
-    controls.getObject().lookAt(24, Ycod, 36);
+            if (Z == 41) {
+                EY -= 0.2;
+            }
+            else if (Z >= 50) {
+                if (Z <= 53) {
+                    EY -= 0.2;
+                }
+            }
+            else if (Z > 40) {
+                EY -= 0.6;
+            }
+            Eshpere = new THREE.Mesh(circle, Bmaterial);
+            scene.add(Eshpere);
+            Eshpere.position.set(EX, EY, Z);
+        }
+    }
+
+    if (roomNum_Start[0] == '5') {
+        Ycod = -0.4;
+    }
+    else if (roomNum_Start[0] == '6') {
+        Ycod = 5.2;
+    }
+    if(roomIndex_start == roomSet["5Escalator"]){
+        Ycod = -0.4;
+    }
+    else if (roomIndex_start == roomSet["6Escalator"]){
+        Ycod = 5.2;
+    }
+
+    camera.position.set(roomSet[roomNum_Start][0], Ycod + 1, roomSet[roomNum_Start][1]);
+    controls.getObject().lookAt(path[-2].x, 9, path[-2].y);
 
     for (var i = path.length - 1; i >= 0; i--) {
         Xcod = path[i].x;
         Zcod = path[i].y;
 
-        if (i == 0) {
+        if (i == 0 && (sameFloor || roomIndex_start == roomSet["5Escalator"] || roomIndex_start == roomSet["6Escalator"])) { // end point 
             material = Rmaterial;
             obj = new THREE.Mesh(Triangle, material);
             scene.add(obj);
             obj.rotateX(Math.PI);
-            obj.position.set(Xcod, Ycod+2.5, Zcod);
+            obj.position.set(Xcod, Ycod + 2.5, Zcod);
             threeDPath.push(obj);
         }
-        else if (i == path.length - 1) {
+        else if (i == path.length - 1 && (sameFloor || roomIndex_end == roomSet["5Escalator"] || roomIndex_end == roomSet["6Escalator"])) { // start point
             material = Gmaterial;
             obj = new THREE.Mesh(Triangle, material);
             scene.add(obj);
             obj.rotateX(Math.PI);
-            obj.position.set(Xcod, Ycod+2.5, Zcod);
+            obj.position.set(Xcod, Ycod + 2.5, Zcod);
             threeDPath.push(obj);
         }
         else {
             material = Bmaterial;
         }
-
         obj = new THREE.Mesh(circle, material);
         scene.add(obj);
         obj.position.set(Xcod, Ycod, Zcod);
         threeDPath.push(obj);
+
     }
+    return 0;
 }

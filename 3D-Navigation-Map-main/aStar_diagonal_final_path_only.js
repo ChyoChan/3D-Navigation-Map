@@ -15,7 +15,12 @@ var path = [];
 var img5f;
 var img6f;
 var wrongFloor;
+let sameFloor = false;
 let displayPath = false;
+let done = true;
+let threeDActive = false;
+let displaythreeDpath;
+let temp;
 const controls = {
 	view: {x: 0, y: 0, zoom: 1},
 	viewPos: { prevX: null,  prevY: null,  isDragging: false },
@@ -27,9 +32,9 @@ var roomSet = {
 	, "510": [16, 30], "601": [27, 56], "602": [40, 66]
 	, "603": [40, 47], "604": [40, 39], "605": [46, 32]
 	, "606": [36, 32], "607": [23, 32], "608": [16, 12]
-	, "609": [16, 20], "610": [16, 30], "Escalator": [23, 37]
-	, "Accessible Toilet": [17, 37], "Male Toilet": [17, 34]
-	, "Female Toilet": [17, 40], "Elevator": [10, 52]
+	, "609": [16, 20], "610": [16, 30], "6Escalator": [23, 37],
+	"5Escalator": [27, 52], "Accessible Toilet": [17, 37], "Male Toilet": [17, 34]
+	, "Female Toilet": [17, 40], "Elevator": [10, 52], "Escalator": [27, 52]
 };
 
 var roomIndex_start;
@@ -99,9 +104,11 @@ function setup() {
 	w = width / cols; // width of each node 
 	h = height / rows; // height of each 
 	noLoop();
+	
 }
 
 function reset() {
+	done = false
 	wrongFloor = false;
 	openSet = []; // an array contains all node that we will visit
 	closedSet = []; // an array contains all node that we have visited
@@ -131,12 +138,14 @@ function reset() {
 	document.getElementById("errormessage").textContent = "";
 	roomNum_Start = document.getElementById("start_input").value;
 	roomNum_End = document.getElementById("end_input").value;
+	sameFloor = false;
 	if ((roomNum_Start in roomSet) && (roomNum_End in roomSet)) { // check the input value
+		document.getElementById("errormessage").style.visibility = "hidden";
 		if (current_floor == "5f") { // user staying on 5F
 
 			if (roomNum_Start[0] == "6" && roomNum_End[0] == "6") { // 6xx to 6xx
 				wrongFloor = true;
-
+				sameFloor = true;
 				if (autoturn) {
 					turn6f();
 					return;
@@ -144,24 +153,27 @@ function reset() {
 
 			} else if (roomNum_End[0] == "6") { // 5xx to 6xx
 				roomIndex_start = roomSet[roomNum_Start];
-				roomIndex_end = roomSet["Escalator"];
+				roomIndex_end = roomSet["5Escalator"];
 
 			} else if (roomNum_Start[0] == "6") { // 6xx to 5xx 
-				roomIndex_start = roomSet["Escalator"];
+				roomIndex_start = roomSet["5Escalator"];
 				roomIndex_end = roomSet[roomNum_End];
 				if (autoturn) {
 					turn6f();
 				}
 
 			} else { // 5xx to 5xx
+				sameFloor = true;
 				roomIndex_start = roomSet[roomNum_Start];
 				roomIndex_end = roomSet[roomNum_End];
+				
 
 			}
 		} else if (current_floor == "6f") { // user stay on 6F
 			if (roomNum_Start[0] == "5" && roomNum_End[0] == "5") { // 5xx to 5xx
 				wrongFloor = true;
-				
+				sameFloor = true;
+
 				if (autoturn) {
 					turn5f();
 					return;
@@ -169,10 +181,10 @@ function reset() {
 
 			} else if (roomNum_End[0] == "5") { // 6xx to 5xx
 				roomIndex_start = roomSet[roomNum_Start];
-				roomIndex_end = roomSet["Escalator"];
+				roomIndex_end = roomSet["6Escalator"];
 
 			} else if (roomNum_Start[0] == "5") { // 5xx to 6xx 
-				roomIndex_start = roomSet["Escalator"];
+				roomIndex_start = roomSet["6Escalator"];
 				roomIndex_end = roomSet[roomNum_End];
 
 				if (autoturn) {
@@ -180,8 +192,13 @@ function reset() {
 				}
 
 			} else { // 6xx to 6xx
+				if (roomNum_End == "Escalator"){
+					roomNum_End =  "6Escalator"
+				}
+				sameFloor = true;
 				roomIndex_start = roomSet[roomNum_Start];
 				roomIndex_end = roomSet[roomNum_End];
+				
 			}
 		}
 		start = grid.at(roomIndex_start[0]).at(roomIndex_start[1]); // define the starting point
@@ -189,6 +206,7 @@ function reset() {
 		openSet.push(start);
 
 	} else {
+		document.getElementById("errormessage").style.visibility = "visible";
 		document.getElementById("errormessage").textContent = "There no such destination, please enter again.";
 		noLoop();
 	}
@@ -214,7 +232,6 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 
 		if (current === end) {
 			displayPath = true;
-			console.log("DONE!");
 			noLoop();
 		}
 
@@ -260,11 +277,11 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 	h = height / rows;
 
 	// showing grid
-	for (var i = 0; i < cols; i++) {
-	   for (var j = 0; j < rows; j++) {
-	     grid[i][j].show_grid(color(0));
-	   }
-	}
+	// for (var i = 0; i < cols; i++) {
+	//    for (var j = 0; j < rows; j++) {
+	//      grid[i][j].show_grid(color(0));
+	//    }
+	// }
 
 	path = [];
 	var temp = current;
@@ -276,6 +293,12 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 
 	// display the path
 	if (displayPath) {
+		if (threeDActive){
+			temp = displaythreeDpath();
+		}
+		if (!done && roomIndex_end == roomSet["5Escalator"] && threeDActive){
+			turn6f();
+		}
 		noFill();
 		stroke('blue');
 		strokeWeight(w / 4);
@@ -321,4 +344,8 @@ function minimap() {
 	var minimapContainer = document.getElementById('minimap');
 	miniCanvas.parent(minimapContainer);
 	noLoop();
+}
+
+function hidebox() {
+	document.getElementById("errormessage").style.visibility = 'hidden';
 }
