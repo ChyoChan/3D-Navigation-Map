@@ -21,10 +21,12 @@ let done = true;
 let threeDActive = false;
 let displaythreeDpath;
 let temp;
-const controls = {
-	view: {x: 0, y: 0, zoom: 1},
-	viewPos: { prevX: null,  prevY: null,  isDragging: false },
-  }
+
+const controls = { // for control the image position 
+	view: { x: 0, y: 0, zoom: 1 },
+	viewPos: { prevX: null, prevY: null, isDragging: false },
+}
+
 var roomSet = {
 	"501": [27, 56], "502": [40, 66], "503": [40, 47]
 	, "504": [40, 39], "505": [46, 32], "506": [36, 32]
@@ -70,7 +72,7 @@ function turn5f() {
 function turn6f() {
 	current_floor = "6f";
 	current_image = img6f;
-	autoturn = false;	
+	autoturn = false;
 	reset();
 	loop();
 }
@@ -104,7 +106,7 @@ function setup() {
 	w = width / cols; // width of each node 
 	h = height / rows; // height of each 
 	noLoop();
-	
+
 }
 
 function reset() {
@@ -166,7 +168,7 @@ function reset() {
 				sameFloor = true;
 				roomIndex_start = roomSet[roomNum_Start];
 				roomIndex_end = roomSet[roomNum_End];
-				
+
 
 			}
 		} else if (current_floor == "6f") { // user stay on 6F
@@ -192,13 +194,13 @@ function reset() {
 				}
 
 			} else { // 6xx to 6xx
-				if (roomNum_End == "Escalator"){
-					roomNum_End =  "6Escalator"
+				if (roomNum_End == "Escalator") {
+					roomNum_End = "6Escalator"
 				}
 				sameFloor = true;
 				roomIndex_start = roomSet[roomNum_Start];
 				roomIndex_end = roomSet[roomNum_End];
-				
+
 			}
 		}
 		start = grid.at(roomIndex_start[0]).at(roomIndex_start[1]); // define the starting point
@@ -211,10 +213,11 @@ function reset() {
 		noLoop();
 	}
 }
-	
+
 function draw() { // if will self-loopping automatically by the p5.jsxs
-	background(0);
-	
+	clear();
+	image(current_image, controls.view.x, controls.view.y, width, height);
+
 	displayPath = false;
 	if (wrongFloor) {
 		console.log("not useful")
@@ -265,10 +268,8 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 
 			}
 		}
-		image(current_image, a, b, width, height);
 	} else {
 		console.log('no solution');
-		image(current_image, a, b, width, height);
 		noLoop();
 		return;
 	}
@@ -293,10 +294,10 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 
 	// display the path
 	if (displayPath) {
-		if (threeDActive){
+		if (threeDActive) {
 			temp = displaythreeDpath();
 		}
-		if (!done && roomIndex_end == roomSet["5Escalator"] && threeDActive){
+		if (!done && roomIndex_end == roomSet["5Escalator"] && threeDActive) {
 			turn6f();
 		}
 		noFill();
@@ -304,14 +305,14 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 		strokeWeight(w / 4);
 		beginShape();
 		for (var i = 0; i < path.length; i++) {
-			vertex(path[i].x * w + w / 2, path[i].y * h + h / 2);
+			vertex(path[i].x * w + w / 2 + controls.view.x, path[i].y * h + h / 2 + controls.view.y);
 			// console.log('x:'+path[i].x);
 			// console.log(', y:'+path[i].y);
 			// console.log('\n');
 		}
 		endShape();
-		start.show_node('green');
-		end.show_node('red');
+		start.show_node('green', controls.view.x, controls.view.y);
+		end.show_node('red', controls.view.x, controls.view.y);
 		//grid[24][36].show_node('red');
 	}
 }
@@ -348,4 +349,58 @@ function minimap() {
 
 function hidebox() {
 	document.getElementById("errormessage").style.visibility = 'hidden';
+}
+
+window.mousePressed = e => Controls.move(controls).mousePressed(e);
+window.mouseDragged = e => Controls.move(controls).mouseDragged(e);
+window.mouseReleased = e => Controls.move(controls).mouseReleased(e);
+
+class Controls {
+	static move(controls) {
+		function mousePressed(e) {
+			controls.viewPos.isDragging = true;
+			controls.viewPos.prevX = e.clientX;
+			controls.viewPos.prevY = e.clientY;
+		}
+
+		function mouseDragged(e) {
+			const { prevX, prevY, isDragging } = controls.viewPos;
+			if (!isDragging) return;
+
+			const pos = { x: e.clientX, y: e.clientY };
+			const dx = pos.x - prevX;
+			const dy = pos.y - prevY;
+			//   console.log(dx +", "+ dy)
+
+			var checkX = controls.view.x + dx;
+			var checkY = controls.view.y + dy;
+
+			//   if((prevX || prevY) &&checkX <0 && checkY<0 && checkX>-100 && checkY>-100) {
+			if ((prevX || prevY)) {
+
+				controls.view.x += dx;
+				controls.view.y += dy;
+
+				// console.log(controls.view.x,controls.view.y)
+				controls.viewPos.prevX = pos.x, controls.viewPos.prevY = pos.y
+
+			}
+			reset();
+			loop();
+
+		}
+
+		function mouseReleased(e) {
+			controls.viewPos.isDragging = false;
+			controls.viewPos.prevX = null;
+			controls.viewPos.prevY = null;
+
+		}
+
+		return {
+			mousePressed,
+			mouseDragged,
+			mouseReleased
+		}
+	}
 }

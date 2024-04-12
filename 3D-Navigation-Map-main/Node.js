@@ -114,20 +114,20 @@ function Node(x, y) {
 		}
 	}
 
-	this.show_grid = function (color) {
+	this.show_grid = function (color,changeX,changeY) {
 		fill(0, 0, 0, 0);
 		stroke(color);
 		if (this.obstacles) {
 			fill(255, 255, 255, 1);
 			stroke("lightblue")
 		}
-		rect(this.x * w, this.y * h, w - 1, h - 1);
+		rect(this.x * w+changeX, this.y * h+changeY, w - 1, h - 1);
 	}
 
-	this.show_node = function (color) {
+	this.show_node = function (color,changeX,changeY) {
 		fill(color);
 		noStroke();
-		ellipse(this.x * w + w / 2, this.y * h + h / 2, w, w);
+		ellipse(this.x * w + w / 2+changeX, this.y * h + h / 2+changeY, w, w);
 		// rect(this.x*w, this.y*h, w - 1, h - 1);
 	}
 
