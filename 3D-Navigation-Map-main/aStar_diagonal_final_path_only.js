@@ -56,6 +56,7 @@ function run() {
 	autoturn = true;
 	reset();
 	loop();
+	checkalarm();
 }
 
 // change to 5floor 2d map and find the path
@@ -137,14 +138,13 @@ function reset() {
 			grid[i][j].addNeighbors(grid);
 		}
 	}
+	document.getElementById("errormessage").style.visibility = "hidden";
 	document.getElementById("errormessage").textContent = "";
 	roomNum_Start = document.getElementById("start_input").value;
 	roomNum_End = document.getElementById("end_input").value;
 	sameFloor = false;
 	if ((roomNum_Start in roomSet) && (roomNum_End in roomSet)) { // check the input value
-		document.getElementById("errormessage").style.visibility = "hidden";
 		if (current_floor == "5f") { // user staying on 5F
-
 			if (roomNum_Start[0] == "6" && roomNum_End[0] == "6") { // 6xx to 6xx
 				wrongFloor = true;
 				sameFloor = true;
@@ -208,8 +208,6 @@ function reset() {
 		openSet.push(start);
 
 	} else {
-		document.getElementById("errormessage").style.visibility = "visible";
-		document.getElementById("errormessage").textContent = "There no such destination, please enter again.";
 		noLoop();
 	}
 }
@@ -402,5 +400,14 @@ class Controls {
 			mouseDragged,
 			mouseReleased
 		}
+	}
+}
+
+function checkalarm(){
+	if ((roomNum_Start in roomSet) && (roomNum_End in roomSet)){
+		document.getElementById("errormessage").style.visibility = "hidden";
+	} else {
+		document.getElementById("errormessage").style.visibility = "visible";
+		document.getElementById("errormessage").textContent = "There no such destination, please enter again.";
 	}
 }
