@@ -55,7 +55,6 @@
           <option value="608">608</option>
           <option value="609">609</option>
           <option value="610">610</option>
-          <option value="611">611</option>
           <option value="Male Toilet">Male Toilet</option>
           <option value="Female Toilet">Female Toilet</option>
           <option value="Elevator">Elevator</option>
@@ -66,7 +65,7 @@
             <div id="tocircle"></div>
             <div id="word">To :</div>
         </div>
-        <input id='end_input' name="end" list="endIn" >
+        <input id='end_input' name="end" list="endIn">
         <br><label id="selector_label_end" for="end"></label>
         <br><datalist id="endIn" name="end">
           <option value="501">501</option>
@@ -89,7 +88,6 @@
           <option value="608">608</option>
           <option value="609">609</option>
           <option value="610">610</option>
-          <option value="611">611</option>
           <option value="Male Toilet">Male Toilet</option>
           <option value="Female Toilet">Female Toilet</option>
           <option value="Accessible Toilet">Accessible Toilet</option>
@@ -166,8 +164,10 @@
       </div>
       <div id="threedcontainer">
         <div id="threedmodel"></div>
-        <div id="minimap">
-          <button id="switch2d" type="button" style="background-image: url(pics/cross.png);"></button>
+        <div id="minimapContainer">
+          <div id="minimap">
+            <button id="switch2d" type="button" style="background-image: url(pics/cross.png);"></button>
+          </div>
         </div>
       </div>
     </div>
@@ -175,6 +175,12 @@
   <script src="Node.js"></script>
   <script type="module" src="./map.js"></script>
   <script src="aStar_diagonal_final_path_only.js"></script>
+  <script src="minimap.js"></script>
+  <script>
+    window.onload = function(){
+      setupminimap();
+    };
+  </script>
 </body>
 
 </html>

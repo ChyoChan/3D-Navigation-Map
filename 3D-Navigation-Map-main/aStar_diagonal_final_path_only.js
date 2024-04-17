@@ -21,6 +21,8 @@ let done = true;
 let threeDActive = false;
 let displaythreeDpath;
 let p;
+let minimapContainer = document.getElementById('minimap');
+let canvas;
 
 const controls = { // for control the image position 
 	view: { x: 0, y: 0, zoom: 1 },
@@ -97,7 +99,7 @@ function setup() {
 	fiveFloorBtn.mousePressed(turn5f); // if 5F button is clicked
 	sixFloorBtn.mousePressed(turn6f); // if 6F button is clicked 
 
-	var canvas = createCanvas(canvasWidth, canvasHeight);
+	canvas = createCanvas(canvasWidth, canvasHeight);
 	canvas.mouseWheel(e => Controls.zoom(controls).worldZoom(e))
 	current_image = img5f;
 	current_floor = "5f"
@@ -416,3 +418,14 @@ function checkalarm(){
 		document.getElementById("errormessage").textContent = "There no such destination, please enter again.";
 	}
 }
+function minimap(){
+	document.getElementById("switchmap").addEventListener("click", function () {
+		canvas.parent('minimapContainer');
+		canvasWidth = 250;
+		canvasHeight = 370;
+		resizeCanvas(canvasWidth, canvasHeight);
+		reset();
+		loop();
+	});
+}
+minimap();
