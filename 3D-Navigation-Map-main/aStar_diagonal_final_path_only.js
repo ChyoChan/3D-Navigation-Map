@@ -340,16 +340,6 @@ function zoomout() {
 	loop();
 };
 
-function minimap() {
-	var miniCanvas = createCanvas(300, 600);
-	current_f = img5f;
-	current_floor = "5f"
-
-	var minimapContainer = document.getElementById('minimap');
-	miniCanvas.parent(minimapContainer);
-	noLoop();
-}
-
 function hidebox() {
 	document.getElementById("errormessage").style.visibility = 'hidden';
 }
