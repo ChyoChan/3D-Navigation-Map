@@ -352,9 +352,11 @@ function hidebox() {
 	document.getElementById("errormessage").style.visibility = 'hidden';
 }
 
+if (!threeDActive){
 window.mousePressed = e => Controls.move(controls).mousePressed(e);
 window.mouseDragged = e => Controls.move(controls).mouseDragged(e);
 window.mouseReleased = e => Controls.move(controls).mouseReleased(e);
+}
 
 class Controls {
 	static move(controls) {
