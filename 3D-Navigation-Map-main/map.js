@@ -62,9 +62,9 @@ function init() {
 
     const loader = new GLTFLoader().setPath('map/');
 
-    loader.load('56_8.0.gltf', function (gltf) { // load the 3D map to the scene
+    loader.load('56_5.0.gltf', function (gltf) { // load the 3D map to the scene
         const mesh = gltf.scene; // the object of the map
-        mesh.position.set(0, -0.5, 0); // set position of the map
+        mesh.position.set(0, 0, 0); // set position of the map
         scene.add(mesh); // add the map to the scene 
 
         const ambientLight = new THREE.AmbientLight(0x707070, 1);
@@ -224,10 +224,6 @@ window.addEventListener('resize', function () {
     renderer.setSize(window.innerWidth, window.innerHeight);
 })
 
-
-
-
-
 displaythreeDpath = function() {
     var Xcod;
     var Zcod;
@@ -243,9 +239,8 @@ displaythreeDpath = function() {
         }
     }
     done = false
-
     if (!sameFloor) {
-        for (var Z = 38; Z < 53; Z++) {
+        for (var Z = 38; Z < 52; Z++) {
 
             if (Z == 41) {
                 EY -= 0.2;
@@ -257,12 +252,6 @@ displaythreeDpath = function() {
             }
             else if (Z > 40) {
                 EY -= 0.6;
-            }
-            if (Z >= 41){
-                EX += 0.2;
-            }
-            if (Z == 52){
-                EX += 0.7;
             }
             Eshpere = new THREE.Mesh(circle, Bmaterial);
             scene.add(Eshpere);
@@ -297,7 +286,6 @@ displaythreeDpath = function() {
             obj.rotateX(Math.PI);
             obj.position.set(Xcod, Ycod + 2.5, Zcod);
             threeDPath.push(obj);
-            done =true;
         }
         else if (i == path.length - 1 && (sameFloor || roomIndex_end == roomSet["5Escalator"] || roomIndex_end == roomSet["6Escalator"])) { // start point
             material = Gmaterial;
@@ -318,3 +306,18 @@ displaythreeDpath = function() {
     }
     return 0;
 }
+
+function switch56() {
+    var cameraY = camera.position.y;
+    if (isMinimap = true){
+        if (cameraY >= 1) {
+            current_image = img6f;
+        } else {
+                current_image = img5f;
+        }
+    } 
+    console.log("Camera Y-coordinate:", cameraY);
+    setTimeout(switch56, 100);
+}
+
+switch56();

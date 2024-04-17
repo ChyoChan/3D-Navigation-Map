@@ -22,6 +22,7 @@ let threeDActive = false;
 let displaythreeDpath;
 let p;
 let canvas;
+let isMinimap = false;
 
 const controls = { // for control the image position 
 	view: { x: 0, y: 0, zoom: 1 },
@@ -425,6 +426,7 @@ function minimap(){
 		resizeCanvas(canvasWidth, canvasHeight);
 		reset();
 		loop();
+		isMinimap = true;
 	});
 }
 minimap();
@@ -437,6 +439,7 @@ function canvasmap(){
 		resizeCanvas(canvasWidth, canvasHeight);
 		run();
 		hidebox();
+		isMinimap = false;
 	});
 }
 canvasmap();
