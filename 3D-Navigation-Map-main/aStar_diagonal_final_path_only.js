@@ -21,7 +21,6 @@ let done = true;
 let threeDActive = false;
 let displaythreeDpath;
 let p;
-let minimapContainer = document.getElementById('minimap');
 let canvas;
 
 const controls = { // for control the image position 
@@ -422,10 +421,22 @@ function minimap(){
 	document.getElementById("switchmap").addEventListener("click", function () {
 		canvas.parent('minimapContainer');
 		canvasWidth = 250;
-		canvasHeight = 370;
+		canvasHeight = 450;
 		resizeCanvas(canvasWidth, canvasHeight);
 		reset();
 		loop();
 	});
 }
 minimap();
+
+function canvasmap(){
+	document.getElementById("switch2d").addEventListener("click", function () {
+		canvas.parent('twodmapcontainer');
+		canvasWidth = 1000;
+		canvasHeight = 1800;
+		resizeCanvas(canvasWidth, canvasHeight);
+		run();
+		hidebox();
+	});
+}
+canvasmap();
