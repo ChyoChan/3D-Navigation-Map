@@ -34,8 +34,7 @@ const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerH
 var controls = new PointerLockControls(camera, threeDContainer);
 const controllerCamera = controls.getObject();
 
-scene.add(new THREE.GridHelper(100, 100));
-scene.add(new THREE.AxesHelper(5));
+
 
 
 // add reference line
@@ -225,6 +224,7 @@ window.addEventListener('resize', function () {
 })
 
 displaythreeDpath = function() {
+    var PYcod;
     var Xcod;
     var Zcod;
     var obj;
@@ -262,13 +262,16 @@ displaythreeDpath = function() {
             Eshpere = new THREE.Mesh(circle, Bmaterial);
             scene.add(Eshpere);
             Eshpere.position.set(EX, EY, Z);
+            threeDPath.push(Eshpere);
         }
     }
 
     if (roomNum_Start[0] == '5') {
+        PYcod = -0.4;
         Ycod = -0.4;
     }
     else if (roomNum_Start[0] == '6') {
+        PYcod = 5.2;
         Ycod = 5.2;
     }
     if(roomIndex_start == roomSet["5Escalator"]){
@@ -278,8 +281,8 @@ displaythreeDpath = function() {
         Ycod = 5.2;
     }
 
-    camera.position.set(roomSet[roomNum_Start][0], Ycod + 1, roomSet[roomNum_Start][1]);
-    
+    camera.position.set(roomSet[roomNum_Start][0], PYcod + 1, roomSet[roomNum_Start][1]);
+    controls.getObject().lookAt(0,  Ycod + 1, 0);
 
     for (var i = path.length - 1; i >= 0; i--) {
         Xcod = path[i].x;
@@ -292,7 +295,7 @@ displaythreeDpath = function() {
             obj.rotateX(Math.PI);
             obj.position.set(Xcod, Ycod + 2.5, Zcod);
             threeDPath.push(obj);
-            done =true;
+            done = true;
         }
         else if (i == path.length - 1 && (sameFloor || roomIndex_end == roomSet["5Escalator"] || roomIndex_end == roomSet["6Escalator"])) { // start point
             material = Gmaterial;
@@ -314,17 +317,16 @@ displaythreeDpath = function() {
     return 0;
 }
 
-function switch56() {
-    var cameraY = camera.position.y;
-    if (isMinimap = true){
-        if (cameraY >= 0.7) {
-            current_image = img6f;
-        } else if (cameraY < 0.7) {
-            current_image = img5f;
-        }
-    } 
-    console.log("Camera Y-coordinate:", cameraY);
-    setTimeout(switch56, 100);
-}
+// function switch56() {
+//     var cameraY = camera.position.y;
+//     if (isMinimap = true){
+//         if (cameraY >= 5.2) {
+//             current_image = img6f;
+//         } else if (cameraY < 5.2) {
+//             current_image = img5f;
+//         }
+//     } 
+//     setTimeout(switch56, 1);
+// }
 
-switch56();
+// switch56();

@@ -96,7 +96,7 @@ function Node(x, y) {
 		if (x == 23 & (y == 35 || y == 36)){
 			this.obstacles = false;
 		}
-		if (x == 27 && y == 56) { // for 501
+		if (x == 27 && y == 56) { // for 602
 			this.obstacles = false;
 		}
 
@@ -109,7 +109,7 @@ function Node(x, y) {
 		if (x >= 10 && x <=18 && y == 52){
 			this.obstacles = false;
 		}
-		if ((x >= 14 && x <= 18 && y == 55) || (x == 14 && y == 56)){
+		if ((x >= 4 && x <= 18 && y == 55) || (x == 4 && y == 56)){
 			this.obstacles = false;
 		}
 	}
