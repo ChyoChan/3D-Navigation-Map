@@ -233,7 +233,7 @@ displaythreeDpath = function() {
     var EY = 5.4;
     var EX = 23;
     var Eshpere;
-    if (done) {
+    if (done && reset1) {
         for (var i = 0; i < threeDPath.length; i++) {
             scene.remove(threeDPath[i]);
         }
@@ -280,9 +280,14 @@ displaythreeDpath = function() {
     else if (roomIndex_start == roomSet["6Escalator"]){
         Ycod = 5.2;
     }
+    if (reset1){
+        camera.position.set(roomSet[roomNum_Start][0], PYcod + 1, roomSet[roomNum_Start][1]);
+        controls.getObject().lookAt(0,  Ycod + 1, 0);
+        reset1 = false;
+    }
 
-    camera.position.set(roomSet[roomNum_Start][0], PYcod + 1, roomSet[roomNum_Start][1]);
-    controls.getObject().lookAt(0,  Ycod + 1, 0);
+    // camera.position.set(roomSet[roomNum_Start][0], PYcod + 1, roomSet[roomNum_Start][1]);
+    // controls.getObject().lookAt(0,  Ycod + 1, 0);
 
     for (var i = path.length - 1; i >= 0; i--) {
         Xcod = path[i].x;
@@ -317,16 +322,24 @@ displaythreeDpath = function() {
     return 0;
 }
 
-// function switch56() {
-//     var cameraY = camera.position.y;
-//     if (isMinimap = true){
-//         if (cameraY >= 5.2) {
-//             current_image = img6f;
-//         } else if (cameraY < 5.2) {
-//             current_image = img5f;
-//         }
-//     } 
-//     setTimeout(switch56, 1);
-// }
+function switch56() {
+    var cameraY = camera.position.y;
+    var tempMap = current_image;
+    if (isMinimap == true){
+        if (cameraY >= 5.2) {
+            current_image = img6f;
+        } else if (cameraY < 5.2) {
+            current_image = img5f;
+        }
+    } 
 
-// switch56();
+    if (tempMap != current_image){
+        reset();
+        loop();
+        // displaythreeDpath();
+        tempMap = current_image;
+    }
+    setTimeout(switch56, 2000);
+}
+
+switch56();

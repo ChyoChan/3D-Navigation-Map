@@ -23,7 +23,7 @@ let displaythreeDpath;
 let p;
 let canvas;
 let isMinimap = false;
-
+let reset1;
 
 const controls = { // for control the image position 
 	view: { x: 0, y: 0, zoom: 1 },
@@ -57,6 +57,7 @@ function preload() {
 
 function run() {
 	autoturn = true;
+	reset1 = true;
 	reset();
 	loop();
 	checkalarm();
@@ -101,7 +102,6 @@ function setup() {
 	sixFloorBtn.mousePressed(turn6f); // if 6F button is clicked 
 
 	canvas = createCanvas(canvasWidth, canvasHeight);
-	canvas.mouseWheel(e => Controls.zoom(controls).worldZoom(e))
 	current_image = img5f;
 	current_floor = "5f"
 
@@ -233,6 +233,7 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 
 		if (current === end) {
 			displayPath = true;
+			console.log("done!");
 			noLoop();
 		}
 
@@ -276,11 +277,11 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 	h = height / rows;
 
 	// showing grid
-	for (var i = 0; i < cols; i++) {
-	   for (var j = 0; j < rows; j++) {
-	     grid[i][j].show_grid(color(0), controls.view.x, controls.view.y);
-	   }
-	}
+	// for (var i = 0; i < cols; i++) {
+	//    for (var j = 0; j < rows; j++) {
+	//      grid[i][j].show_grid(color(0), controls.view.x, controls.view.y);
+	//    }
+	// }
 
 	path = [];
 	var temp = current;
@@ -378,8 +379,15 @@ class Controls {
 				controls.viewPos.prevX = pos.x, controls.viewPos.prevY = pos.y
 
 			}
-			reset();
-			loop();
+
+			if(isMinimap){
+				controls.view.x = 0;
+				controls.view.y = 0;
+			}else{
+				reset();
+				loop();	
+			}
+
 
 		}
 
@@ -406,6 +414,23 @@ function checkalarm(){
 		document.getElementById("errormessage").textContent = "There no such destination, please enter again.";
 	}
 }
+
+function minimap(){
+	document.getElementById("switchmap").addEventListener("click", function () {
+		canvas.parent('minimapContainer');
+		canvasWidth = 250;
+		canvasHeight = 450;
+		resizeCanvas(canvasWidth, canvasHeight);
+		controls.view.x = 0;
+		controls.view.y = 0;
+		reset();
+		loop();
+		isMinimap = true;
+
+	});
+}
+minimap();
+
 // function minimap(){
 // 	document.getElementById("switchmap").addEventListener("click", function () {
 // 		canvas.parent('minimapContainer');
@@ -419,15 +444,15 @@ function checkalarm(){
 // }
 // minimap();
 
-// function canvasmap(){
-// 	document.getElementById("switch2d").addEventListener("click", function () {
-// 		canvas.parent('twodmapcontainer');
-// 		canvasWidth = 1000;
-// 		canvasHeight = 1800;
-// 		resizeCanvas(canvasWidth, canvasHeight);
-// 		run();
-// 		hidebox();
-// 		isMinimap = false;
-// 	});
-// }
-// canvasmap();
+function canvasmap(){
+	document.getElementById("switch2d").addEventListener("click", function () {
+		canvas.parent('twodmapcontainer');
+		canvasWidth = 1000;
+		canvasHeight = 1800;
+		resizeCanvas(canvasWidth, canvasHeight);
+		run();
+		hidebox();
+		isMinimap = false;
+	});
+}
+canvasmap();
