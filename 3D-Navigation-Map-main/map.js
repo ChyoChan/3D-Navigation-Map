@@ -365,7 +365,10 @@ function switch56() {
     var mini_current_image = current_image;
     if (isMinimap == true) {
         redraw();
-
+        if (wrongFloor){
+            test = []
+            testb = false;
+        }
         noFill();
         stroke('blue');
         strokeWeight(w / 4);
@@ -378,10 +381,12 @@ function switch56() {
         stroke('black');
         strokeWeight(4);
         point(cameraX * o * (275 / 1000), cameraZ * k * (495 / 1800));
-        // if(testb){
-        //     start.show_node('green', 0, 0);
-		//     end.show_node('red', 0, 0);
-        // }
+
+
+        if(testb){
+            start.show_node('green', 0, 0);
+		    end.show_node('red', 0, 0);
+        }
         
         if (cameraY >= 5.2) {
             current_image = img6f;

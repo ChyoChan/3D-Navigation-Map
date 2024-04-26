@@ -32,6 +32,7 @@ var changeY = 0;
 var zoomcount = 0
 let o;
 let k;
+let current_floor;
 
 // 1030 1098
 let test = [];
@@ -189,7 +190,6 @@ function reset() {
 			if (roomNum_Start[0] == "5" && roomNum_End[0] == "5") { // 5xx to 5xx
 				wrongFloor = true;
 				sameFloor = true;
-
 				if (autoturn) {
 					turn5f();
 				}
@@ -219,6 +219,7 @@ function reset() {
 		start = grid.at(roomIndex_start[0]).at(roomIndex_start[1]); // define the starting point
 		end = grid.at(roomIndex_end[0]).at(roomIndex_end[1]); // define the ending point
 		openSet.push(start);
+
 
 		startX = roomIndex_start[0];
 		startY = roomIndex_start[1];
@@ -311,6 +312,8 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 	if (displayPath) {
 		test = path;
 		testb = (test.length > 1)
+		
+
 		if (threeDActive) {
 			p = displaythreeDpath();
 		}
@@ -408,22 +411,16 @@ class Controls {
 				controls.view.x = 0;
 				controls.view.y = 0;
 			}
-			else {
-				image(current_image, controls.view.x, controls.view.y, width, height);
+			else{
+				reset();
+				loop();	
 			}
-
-
 		}
 
 		function mouseReleased(e) {
 			controls.viewPos.isDragging = false;
 			controls.viewPos.prevX = null;
 			controls.viewPos.prevY = null;
-
-			if (displayPath) {
-				displayPathTwoD();
-			}
-
 		}
 
 		return {
