@@ -157,10 +157,12 @@ canvas {
     position: absolute;
     top: 5%;
     right: 25px;
-    width: 250px;
-    height: 450px;
+    width: 275px;
+    height: 495px;
     padding: 0;
     margin: 0;
+    background-color: white;
+    border: 1px solid black;
 }
 
 #switch2d {
@@ -222,8 +224,14 @@ td {
     margin: 0;
     padding: 15px;
     right: 0;
-    top: 32%;
-    text-align: center;
+    top: 6%;
+    text-align: left;
     background-color: #f0f0f0;
     border-radius: 15px;
+    font-size: 25px;
+    color: #ff0000;
+}
+
+#errormessage h3 {
+    color: black;
 }
