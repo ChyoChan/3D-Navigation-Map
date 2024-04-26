@@ -24,7 +24,7 @@ let canvas;
 let isMinimap = false;
 let reset1 = false;
 var startX = 0;
-var startY = 0; 
+var startY = 0;
 let autoJump = false;
 let scales = 1;
 var changeX = 0;
@@ -32,6 +32,7 @@ var changeY = 0;
 var zoomcount = 0
 let o;
 let k;
+
 // 1030 1098
 let test = [];
 let testb;
@@ -49,7 +50,7 @@ var roomSet = {
 	, "607": [36, 32], "608": [23, 32], "609": [16, 12]
 	, "610": [16, 20], "611": [16, 30], "6Escalator": [23, 37],
 	"5Escalator": [27, 52], "Accessible Toilet": [17, 37], "Male Toilet": [17, 34]
-	, "Female Toilet": [17, 40], "Elevator": [10, 52]
+	, "Female Toilet": [17, 40], "Elevator": [10, 52], "dummy": [0, 0]
 };
 
 var roomIndex_start;
@@ -112,7 +113,7 @@ function setup() {
 	sixFloorBtn.mousePressed(turn6f); // if 6F button is clicked 
 
 	canvas = createCanvas(canvasWidth, canvasHeight);
-	current_image = img5f;	
+	current_image = img5f;
 	current_floor = "5f";
 
 	var mapContainer = document.getElementById('twodmapcontainer');
@@ -219,7 +220,7 @@ function reset() {
 		end = grid.at(roomIndex_end[0]).at(roomIndex_end[1]); // define the ending point
 		openSet.push(start);
 
-		startX =  roomIndex_start[0];
+		startX = roomIndex_start[0];
 		startY = roomIndex_start[1];
 
 	} else {
@@ -232,10 +233,10 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 	image(current_image, controls.view.x, controls.view.y, width, height);
 
 	displayPath = false;
-	// if (wrongFloor) {
-	// 	console.log("not useful")
-	// 	noLoop();
-	// }
+	if (wrongFloor) {
+		console.log("not useful")
+		noLoop();
+	}
 	if (openSet.length > 0) {
 		var lowestCost = 0;
 		for (var i = 0; i < openSet.length; i++) { // finding a node that having a lowest f cost inside the openSet
@@ -323,26 +324,13 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 			reset();
 			loop();
 		}
-		noFill();
-		stroke('blue');
-		strokeWeight(w / 4);
-		beginShape();
-		for (var i = 0; i < path.length; i++) {
-			vertex(path[i].x * w + w / 2 + controls.view.x, path[i].y * h + h / 2 + controls.view.y);
-			// console.log('x:'+path[i].x);
-			// console.log(', y:'+path[i].y);
-			// console.log('\n');
-		}
-		endShape();
-		start.show_node('green', controls.view.x, controls.view.y);
-		end.show_node('red', controls.view.x, controls.view.y);
-		//grid[24][36].show_node('red');
+		displayPathTwoD();
 	}
 }
 
 // zoomin and out 
 function zoomin() {
-	if (zoomcount < 6){
+	if (zoomcount < 6) {
 		scales = 1;
 		scales *= 1.05;
 		canvasWidth *= scales;
@@ -351,13 +339,13 @@ function zoomin() {
 		reset();
 		loop();
 		zoomcount += 1
-	}else{
+	} else {
 		console.log("You cannot zoom in more")
 	}
-	
+
 };
 function zoomout() {
-	if (zoomcount >-13){
+	if (zoomcount > -13) {
 		scales = 1;
 		scales *= 0.95;
 		canvasWidth *= scales;
@@ -369,18 +357,18 @@ function zoomout() {
 		reset();
 		loop();
 		zoomcount -= 1
-	}else console.log("You cannot zoom out more")
-	
+	} else console.log("You cannot zoom out more")
+
 };
 
 function hidebox() {
 	document.getElementById("errormessage").style.visibility = 'hidden';
 }
 
-if (!threeDActive){
-window.mousePressed = e => Controls.move(controls).mousePressed(e);
-window.mouseDragged = e => Controls.move(controls).mouseDragged(e);
-window.mouseReleased = e => Controls.move(controls).mouseReleased(e);
+if (!threeDActive) {
+	window.mousePressed = e => Controls.move(controls).mousePressed(e);
+	window.mouseDragged = e => Controls.move(controls).mouseDragged(e);
+	window.mouseReleased = e => Controls.move(controls).mouseReleased(e);
 }
 
 class Controls {
@@ -404,23 +392,23 @@ class Controls {
 			// console.log(checkX +", "+ checkY)
 
 
-			if((prevX || prevY) &&checkX <15*w && checkY<15*h && checkX>=-15*w && checkY>=-60*h) {
-			// if ((prevX || prevY)) {
+			if ((prevX || prevY) && checkX < 15 * w && checkY < 15 * h && checkX >= -15 * w && checkY >= -60 * h) {
+				// if ((prevX || prevY)) {
 
 				controls.view.x += dx;
 				controls.view.y += dy;
 
-				
+
 				// console.log(controls.view.x,controls.view.y)
 				controls.viewPos.prevX = pos.x, controls.viewPos.prevY = pos.y
 
 			}
 
-			if(isMinimap){
+			if (isMinimap) {
 				controls.view.x = 0;
 				controls.view.y = 0;
 			}
-			else{
+			else {
 				image(current_image, controls.view.x, controls.view.y, width, height);
 			}
 
@@ -431,11 +419,10 @@ class Controls {
 			controls.viewPos.isDragging = false;
 			controls.viewPos.prevX = null;
 			controls.viewPos.prevY = null;
-			if(!isMinimap){
-				reset();
-				loop();
+
+			if (displayPath) {
+				displayPathTwoD();
 			}
-			
 
 		}
 
@@ -447,23 +434,23 @@ class Controls {
 	}
 }
 
-function checkalarm(){
+function checkalarm() {
 	document.getElementById("errormessage").style.visibility = "visible";
 
-	if (!((roomNum_Start in roomSet) && (roomNum_End in roomSet))){
+	if (!((roomNum_Start in roomSet) && (roomNum_End in roomSet))) {
 		var errormsg = "<h3>Alarm(!):</h3>" + "<br>There no such destination, please enter again!";
 		document.getElementById("errormessage").innerHTML = errormsg;
-	}else if ((roomNum_Start[0]) != (roomNum_End[0])){
-		var switchmsg = "<h3>Alarm(!):</h3>"+ "<br>You can switch to another floor to check path";
+	} else if ((roomNum_Start[0]) != (roomNum_End[0])) {
+		var switchmsg = "<h3>Alarm(!):</h3>" + "<br>You can switch to another floor to check path";
 		document.getElementById("errormessage").innerHTML = switchmsg;
-	}else {
+	} else {
 		document.getElementById("errormessage").style.visibility = "hidden";
 
-		
+
 	}
 }
 
-function minimap(){
+function minimap() {
 	document.getElementById("switchmap").addEventListener("click", function () {
 		canvas.parent('minimapContainer');
 		canvasWidth = 275;
@@ -481,7 +468,7 @@ function minimap(){
 minimap();
 
 
-function canvasmap(){
+function canvasmap() {
 	document.getElementById("switch2d").addEventListener("click", function () {
 		canvas.parent('twodmapcontainer');
 		canvasWidth = 1000;
@@ -493,3 +480,25 @@ function canvasmap(){
 	});
 }
 canvasmap();
+
+function displayPathTwoD() {
+
+	if (sameFloor) {
+		noFill();
+		stroke('blue');
+		strokeWeight(w / 4);
+		beginShape();
+		for (var i = 0; i < path.length; i++) {
+			vertex(path[i].x * w + w / 2 + controls.view.x, path[i].y * h + h / 2 + controls.view.y);
+			// console.log('x:'+path[i].x);
+			// console.log(', y:'+path[i].y);
+			// console.log('\n');
+		}
+		endShape();
+		start.show_node('green', controls.view.x, controls.view.y);
+		end.show_node('red', controls.view.x, controls.view.y);
+	}
+
+
+	//grid[24][36].show_node('red');
+}

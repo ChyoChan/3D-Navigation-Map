@@ -362,33 +362,27 @@ function switch56() {
     var cameraX = camera.position.x;
     var cameraZ = camera.position.z;
     var cameraY = camera.position.y;
-    var tempMap = current_image;
+    var mini_current_image = current_image;
     if (isMinimap == true) {
         redraw();
+
         noFill();
         stroke('blue');
         strokeWeight(w / 4);
         beginShape();
         for (var i = 0; i < test.length; i++) {
             vertex(test[i].x * w + w / 2, test[i].y * h + h / 2);
-            // console.log('x:'+path[i].x);
-            // console.log(', y:'+path[i].y);
-            // console.log('\n');
         }
         endShape();
 
-        //grid[24][36].show_node('red');
         stroke('black');
         strokeWeight(4);
         point(cameraX * o * (275 / 1000), cameraZ * k * (495 / 1800));
-        if(testb){
-            start.show_node('green', 0, 0);
-		    end.show_node('red', 0, 0);
-        }
+        // if(testb){
+        //     start.show_node('green', 0, 0);
+		//     end.show_node('red', 0, 0);
+        // }
         
-
-        
-
         if (cameraY >= 5.2) {
             current_image = img6f;
             current_floor = "6f"
@@ -396,13 +390,12 @@ function switch56() {
             current_image = img5f;
             current_floor = "5f"
         }
-
     }
 
-    if (tempMap != current_image) {
+    if (mini_current_image != current_image) {
         reset();
         loop();
-        tempMap = current_image;
+        mini_current_image = current_image;
     }
-    setTimeout(switch56, 200);
+    setTimeout(switch56, 100);
 }
