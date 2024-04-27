@@ -316,7 +316,23 @@ displaythreeDpath = function () {
     }
     if (reset1) {
         camera.position.set(roomSet[roomNum_Start][0], PYcod + 1, roomSet[roomNum_Start][1]);
-        controls.getObject().lookAt(0, Ycod + 1, 0);
+        if (roomNum_Start[0] == "5"){
+            if (roomNum_End[0] == "5"){
+                controls.getObject().lookAt(30, Ycod + 1, 36);
+            }
+            else if (roomNum_End[0] == "6"){
+                controls.getObject().lookAt(roomSet["6Escalator"][0], Ycod-5, roomSet["6Escalator"][1]);
+            }
+        }
+        else if (roomNum_Start[0] == "6"){
+            if (roomNum_End[0] == "6"){
+                controls.getObject().lookAt(30, Ycod + 1, 36);
+            }
+            else if (roomNum_End[0] == "5"){
+                controls.getObject().lookAt(roomSet["6Escalator"][0], Ycod-5, roomSet["6Escalator"][1]);
+            }
+        }
+
         reset1 = false;
     }
 
@@ -325,13 +341,8 @@ displaythreeDpath = function () {
         Zcod = test[i].y;
 
         if (i == 0 && (sameFloor || roomIndex_start == roomSet["5Escalator"] || roomIndex_start == roomSet["6Escalator"])) { // end point 
-            if (roomNum_Start[0] != roomNum_End[0]){
-                material = Gmaterial;
-            }
-            else{
-                material = Rmaterial;
-            }
-            
+
+            material = Rmaterial;
             obj = new THREE.Mesh(Triangle, material);
             scene.add(obj);
             obj.rotateX(Math.PI);
@@ -342,12 +353,8 @@ displaythreeDpath = function () {
             
         }
         else if (i == test.length - 1 && (sameFloor || roomIndex_end == roomSet["5Escalator"] || roomIndex_end == roomSet["6Escalator"])) { // start point
-            if (roomNum_Start[0] != roomNum_End[0]){
-                material = Rmaterial;
-            }
-            else{
-                material = Gmaterial;
-            }
+
+            material = Gmaterial;
             obj = new THREE.Mesh(Triangle, material);
             scene.add(obj);
             obj.rotateX(Math.PI);
@@ -368,36 +375,6 @@ displaythreeDpath = function () {
 }
 
 var ptArray = [];
-
-/*function switch56() {
-    var cameraX = camera.position.x;
-    var cameraZ = camera.position.z;
-    var cameraY = camera.position.y;
-    var tempMap = current_image;
-    if (isMinimap == true){
-        stroke('black');
-        strokeWeight(4);
-        rmPt();
-        ptArray.push({x:cameraX * w * (275/1000), z:cameraZ * h * (495/1800)});
-        for (var i = 0; i == ptArray.length; i++) {
-            ellipse(ptArray[i].x, ptArray[i].z, 5, 5);
-        }
-        if (cameraY >= 5.2) {
-            current_image = img6f;
-            current_floor = "6f"
-        } else if (cameraY < 5.2) {
-            current_image = img5f;
-            current_floor = "5f"
-        }
-    } 
-
-    if (tempMap != current_image){
-        reset();
-        loop();
-        tempMap = current_image;
-    }
-    setTimeout(switch56, 1000);
-}*/
 
 switch56();
 
@@ -431,14 +408,9 @@ function switch56() {
 
 
         if(testb){
-            if(roomNum_End[0] != roomNum_Start[0]){
-                end.show_node('green', 0, 0);
-                start.show_node('red', 0, 0);
-            }else{
-                start.show_node('green', 0, 0);
-		        end.show_node('red', 0, 0);
-            }
-            
+
+            start.show_node('green', 0, 0);
+            end.show_node('red', 0, 0);
         }
         
         if (cameraY >= 5.2) {
@@ -453,6 +425,7 @@ function switch56() {
     if (mini_current_image != current_image) {
         reset();
         loop();
+        console.log("run")
         mini_current_image = current_image;
 
     }

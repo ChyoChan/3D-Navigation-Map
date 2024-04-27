@@ -41,7 +41,7 @@ const controls = { // for control the image position
 	viewPos: { prevX: null, prevY: null, isDragging: false },
 }
 
-var roomSet = {
+let roomSet = {
 	"501": [27, 56], "502": [40, 66], "503": [40, 47]
 	, "504": [40, 39], "505": [46, 32], "506": [36, 32]
 	, "507": [23, 32], "508": [16, 12], "509": [16, 20]
@@ -53,12 +53,12 @@ var roomSet = {
 	, "Female Toilet": [17, 40], "Elevator": [10, 52], "dummy": [0, 0]
 };
 
-var roomIndex_start;
-var roomIndex_end;
-var current_image;
-var roomNum_Start;
-var roomNum_End;
-var autoturn = false;
+let roomIndex_start;
+let roomIndex_end;
+let current_image;
+let roomNum_Start;
+let roomNum_End;
+let autoturn = false;
 
 function preload() {
 	img5f = loadImage('map/5floor_done_75.png');
@@ -170,18 +170,11 @@ function reset() {
 			} else if (roomNum_End[0] == "6") { // 5xx to 6xx
 				roomIndex_start = roomSet[roomNum_Start];
 				roomIndex_end = roomSet["5Escalator"];
-				if (isMinimap) {
-					roomIndex_start = roomSet["5Escalator"];
-					roomIndex_end = roomSet[roomNum_Start];
-				}
+
 
 			} else if (roomNum_Start[0] == "6") { // 6xx to 5xx 
 				roomIndex_start = roomSet["5Escalator"];
 				roomIndex_end = roomSet[roomNum_End];
-				if (isMinimap) {
-					roomIndex_start = roomSet[roomNum_End];
-					roomIndex_end = roomSet["5Escalator"];
-				}
 				if (autoturn) {
 					turn6f();
 				}
@@ -200,22 +193,18 @@ function reset() {
 				if (autoturn) {
 					turn5f();
 				}
-
+				
 			} else if (roomNum_End[0] == "5") { // 6xx to 5xx
 				roomIndex_start = roomSet[roomNum_Start];
 				roomIndex_end = roomSet["6Escalator"];
-				if (isMinimap) {
-					roomIndex_start = roomSet["6Escalator"];
-					roomIndex_end = roomSet[roomNum_Start];
-				}
 
 			} else if (roomNum_Start[0] == "5") { // 5xx to 6xx 
 				roomIndex_start = roomSet["6Escalator"];
 				roomIndex_end = roomSet[roomNum_End];
-				if (isMinimap) {
-					roomIndex_start = roomSet[roomNum_End];
-					roomIndex_end = roomSet["6Escalator"];
-				}
+				// if (isMinimap) {
+				// 	roomIndex_start = roomSet[roomNum_End];
+				// 	roomIndex_end = roomSet["6Escalator"];
+				// }
 
 				if (autoturn) {
 					turn5f();
