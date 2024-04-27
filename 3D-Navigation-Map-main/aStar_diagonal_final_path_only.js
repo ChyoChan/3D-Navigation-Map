@@ -33,7 +33,6 @@ var zoomcount = 0
 let o;
 let k;
 let current_floor;
-
 // 1030 1098
 let test = [];
 let testb;
@@ -114,6 +113,7 @@ function setup() {
 	sixFloorBtn.mousePressed(turn6f); // if 6F button is clicked 
 
 	canvas = createCanvas(canvasWidth, canvasHeight);
+	canvas.mouseWheel(e => Controls.zoom(controls).worldZoom(e));
 	current_image = img5f;
 	current_floor = "5f";
 
@@ -155,7 +155,6 @@ function reset() {
 		}
 	}
 	document.getElementById("errormessage").style.visibility = "hidden";
-	document.getElementById("errormessage").textContent = "";
 	roomNum_Start = document.getElementById("start_input").value;
 	roomNum_End = document.getElementById("end_input").value;
 	sameFloor = false;
@@ -171,10 +170,18 @@ function reset() {
 			} else if (roomNum_End[0] == "6") { // 5xx to 6xx
 				roomIndex_start = roomSet[roomNum_Start];
 				roomIndex_end = roomSet["5Escalator"];
+				if (isMinimap) {
+					roomIndex_start = roomSet["5Escalator"];
+					roomIndex_end = roomSet[roomNum_Start];
+				}
 
 			} else if (roomNum_Start[0] == "6") { // 6xx to 5xx 
 				roomIndex_start = roomSet["5Escalator"];
 				roomIndex_end = roomSet[roomNum_End];
+				if (isMinimap) {
+					roomIndex_start = roomSet[roomNum_End];
+					roomIndex_end = roomSet["5Escalator"];
+				}
 				if (autoturn) {
 					turn6f();
 				}
@@ -197,10 +204,18 @@ function reset() {
 			} else if (roomNum_End[0] == "5") { // 6xx to 5xx
 				roomIndex_start = roomSet[roomNum_Start];
 				roomIndex_end = roomSet["6Escalator"];
+				if (isMinimap) {
+					roomIndex_start = roomSet["6Escalator"];
+					roomIndex_end = roomSet[roomNum_Start];
+				}
 
 			} else if (roomNum_Start[0] == "5") { // 5xx to 6xx 
 				roomIndex_start = roomSet["6Escalator"];
 				roomIndex_end = roomSet[roomNum_End];
+				if (isMinimap) {
+					roomIndex_start = roomSet[roomNum_End];
+					roomIndex_end = roomSet["6Escalator"];
+				}
 
 				if (autoturn) {
 					turn5f();
@@ -220,7 +235,6 @@ function reset() {
 		end = grid.at(roomIndex_end[0]).at(roomIndex_end[1]); // define the ending point
 		openSet.push(start);
 
-
 		startX = roomIndex_start[0];
 		startY = roomIndex_start[1];
 
@@ -234,10 +248,7 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 	image(current_image, controls.view.x, controls.view.y, width, height);
 
 	displayPath = false;
-	if (wrongFloor) {
-		console.log("not useful")
-		noLoop();
-	}
+	
 	if (openSet.length > 0) {
 		var lowestCost = 0;
 		for (var i = 0; i < openSet.length; i++) { // finding a node that having a lowest f cost inside the openSet
@@ -307,28 +318,37 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 		path.push(temp.previous);
 		temp = temp.previous;
 	}
-
+	
 	// display the path
 	if (displayPath) {
 		test = path;
 		testb = (test.length > 1)
 		
-
+		console.log(current_floor)
 		if (threeDActive) {
 			p = displaythreeDpath();
 		}
-		if (!done && roomIndex_end == roomSet["5Escalator"] && threeDActive) {
+		if (!done && roomIndex_start == roomSet["5Escalator"] && threeDActive) {
 			current_floor = "6f"
 			reset();
 			loop();
 		}
-		else if (!done && roomIndex_end == roomSet["6Escalator"] && threeDActive) {
+		else if (!done && roomIndex_start == roomSet["6Escalator"] && threeDActive) {
 			current_floor = "5f"
 			reset();
 			loop();
 		}
-		displayPathTwoD();
+		if (wrongFloor) {
+			console.log("not useful")
+			noLoop();
+			return;
+		}
+		if (!isMinimap){
+			displayPathTwoD();
+		}
+		
 	}
+	
 }
 
 // zoomin and out 
@@ -366,6 +386,7 @@ function zoomout() {
 
 function hidebox() {
 	document.getElementById("errormessage").style.visibility = 'hidden';
+	document.getElementById("infomsg").style.visibility = 'hidden';
 }
 
 if (!threeDActive) {
@@ -373,6 +394,8 @@ if (!threeDActive) {
 	window.mouseDragged = e => Controls.move(controls).mouseDragged(e);
 	window.mouseReleased = e => Controls.move(controls).mouseReleased(e);
 }
+
+window.onload = hidebox;
 
 class Controls {
 	static move(controls) {
@@ -411,9 +434,9 @@ class Controls {
 				controls.view.x = 0;
 				controls.view.y = 0;
 			}
-			else{
+			else {
 				reset();
-				loop();	
+				loop();
 			}
 		}
 
@@ -435,11 +458,11 @@ function checkalarm() {
 	document.getElementById("errormessage").style.visibility = "visible";
 
 	if (!((roomNum_Start in roomSet) && (roomNum_End in roomSet))) {
-		var errormsg = "<h3>Alarm(!):</h3>" + "<br>There no such destination, please enter again!";
-		document.getElementById("errormessage").innerHTML = errormsg;
+		document.getElementById("infomsg").style.visibility = "hidden";
+		document.getElementById("errormessage").style.visibility = "visible";
 	} else if ((roomNum_Start[0]) != (roomNum_End[0])) {
-		var switchmsg = "<h3>Alarm(!):</h3>" + "<br>You can switch to another floor to check path";
-		document.getElementById("errormessage").innerHTML = switchmsg;
+		document.getElementById("errormessage").style.visibility = "hidden";
+		document.getElementById("infomsg").style.visibility = "visible";
 	} else {
 		document.getElementById("errormessage").style.visibility = "hidden";
 
@@ -480,7 +503,7 @@ canvasmap();
 
 function displayPathTwoD() {
 
-	if (sameFloor) {
+
 		noFill();
 		stroke('blue');
 		strokeWeight(w / 4);
@@ -494,7 +517,6 @@ function displayPathTwoD() {
 		endShape();
 		start.show_node('green', controls.view.x, controls.view.y);
 		end.show_node('red', controls.view.x, controls.view.y);
-	}
 
 
 	//grid[24][36].show_node('red');

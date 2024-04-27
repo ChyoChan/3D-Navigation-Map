@@ -14,6 +14,8 @@ var moveLeft = false;
 var moveRight = false;
 var moveUp = false;
 var moveDown = false;
+let direction = new THREE.Vector3();
+var canJump = false;
 
 // var canJump = false;
 // var spaceUp = true;
@@ -61,7 +63,7 @@ function init() {
 
     const loader = new GLTFLoader().setPath('map/');
 
-    loader.load('56_11.0.gltf', function (gltf) { // load the 3D map to the scene
+    loader.load('56_13.0.gltf', function (gltf) { // load the 3D map to the scene
         const mesh = gltf.scene; // the object of the map
         mesh.position.set(0, -0.5, 0); // set position of the map
         scene.add(mesh); // add the map to the scene 
@@ -151,12 +153,12 @@ function check() {
         var delta = clock.getDelta(); // refresh time
         velocity.x -= velocity.x * 10.0 * delta;
         velocity.z -= velocity.z * 10.0 * delta;
-        velocity.y -= velocity.y * 10.0 * delta;
+        //velocity.y -= velocity.y * 10.0 * delta;
 
-        //velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass (down speed)
-        // direction.z = Number(moveForward) - Number(moveBackward);
-        // direction.x = Number(moveLeft) - Number(moveRight);
-        // direction.normalize(); // Ensures consistent movements in all directions
+        velocity.y -= velocity.y * 100.0 * delta; // 100.0 = mass (down speed)
+        direction.z = Number(moveForward) - Number(moveBackward);
+        direction.x = Number(moveLeft) - Number(moveRight);
+        direction.normalize(); // Ensures consistent movements in all directions
 
         // if (i === 284) {
         //     console.log(direction.z);
@@ -178,9 +180,34 @@ function check() {
         controls.getObject().translateZ(velocity.z * delta); // update the z-axis of camera
 
 
-        if (controls.getObject().position.y < -10) {
+        if (controls.getObject().position.y < -9) {
             velocity.y = 0;
-            controls.getObject().position.set(0, 0, 0);
+            controls.getObject().position.set(30, 15, 36);
+            canJump = true;
+        }
+        if (controls.getObject().position.x < 1) {
+            velocity.x = 0;
+            controls.getObject().position.set(30, 15, 36);
+            canJump = true;
+        }
+        if (controls.getObject().position.z < 1) {
+            velocity.z = 0;
+            controls.getObject().position.set(30, 15, 36);
+            canJump = true;
+        }
+        if (controls.getObject().position.x > 55.8) {
+            velocity.x = 0;
+            controls.getObject().position.set(30, 15, 36);
+            canJump = true;
+        }
+        if (controls.getObject().position.z > 89) {
+            velocity.z = 0;
+            controls.getObject().position.set(30, 15, 36);
+            canJump = true;
+        }
+        if (controls.getObject().position.y > 18) {
+            velocity.y = 0;
+            controls.getObject().position.set(30, 15, 36);
             canJump = true;
         }
     }
@@ -233,11 +260,17 @@ displaythreeDpath = function () {
     var EY = 5.4;
     var EX = 23;
     var Eshpere;
-    if (done && reset1) {
+    console.log(current_floor)
+    console.log(roomIndex_start)
+    console.log(roomIndex_end)
+    if (done) {
         for (var i = 0; i < threeDPath.length; i++) {
             scene.remove(threeDPath[i]);
         }
         done = false
+        threeDPath = []
+        console.log("removed 3dpath")
+        
     }
 
     if (!sameFloor) {
@@ -275,10 +308,10 @@ displaythreeDpath = function () {
         PYcod = 5.2;
         Ycod = 5.2;
     }
-    if (roomIndex_start == roomSet["5Escalator"]) {
+    if (roomIndex_start == roomSet["5Escalator"] || roomIndex_end == roomSet["5Escalator"]) {
         Ycod = -0.4;
     }
-    else if (roomIndex_start == roomSet["6Escalator"]) {
+    else if (roomIndex_start == roomSet["6Escalator"] || roomIndex_end == roomSet["6Escalator"]) {
         Ycod = 5.2;
     }
     if (reset1) {
@@ -287,26 +320,40 @@ displaythreeDpath = function () {
         reset1 = false;
     }
 
-    for (var i = path.length - 1; i >= 0; i--) {
-        Xcod = path[i].x;
-        Zcod = path[i].y;
+    for (var i = test.length - 1; i >= 0; i--) {
+        Xcod = test[i].x;
+        Zcod = test[i].y;
 
         if (i == 0 && (sameFloor || roomIndex_start == roomSet["5Escalator"] || roomIndex_start == roomSet["6Escalator"])) { // end point 
-            material = Rmaterial;
+            if (roomNum_Start[0] != roomNum_End[0]){
+                material = Gmaterial;
+            }
+            else{
+                material = Rmaterial;
+            }
+            
             obj = new THREE.Mesh(Triangle, material);
             scene.add(obj);
             obj.rotateX(Math.PI);
             obj.position.set(Xcod, Ycod + 2.5, Zcod);
             threeDPath.push(obj);
+
             done = true;
+            
         }
-        else if (i == path.length - 1 && (sameFloor || roomIndex_end == roomSet["5Escalator"] || roomIndex_end == roomSet["6Escalator"])) { // start point
-            material = Gmaterial;
+        else if (i == test.length - 1 && (sameFloor || roomIndex_end == roomSet["5Escalator"] || roomIndex_end == roomSet["6Escalator"])) { // start point
+            if (roomNum_Start[0] != roomNum_End[0]){
+                material = Rmaterial;
+            }
+            else{
+                material = Gmaterial;
+            }
             obj = new THREE.Mesh(Triangle, material);
             scene.add(obj);
             obj.rotateX(Math.PI);
             obj.position.set(Xcod, Ycod + 2.5, Zcod);
             threeDPath.push(obj);
+
         }
         else {
             material = Bmaterial;
@@ -384,8 +431,14 @@ function switch56() {
 
 
         if(testb){
-            start.show_node('green', 0, 0);
-		    end.show_node('red', 0, 0);
+            if(roomNum_End[0] != roomNum_Start[0]){
+                end.show_node('green', 0, 0);
+                start.show_node('red', 0, 0);
+            }else{
+                start.show_node('green', 0, 0);
+		        end.show_node('red', 0, 0);
+            }
+            
         }
         
         if (cameraY >= 5.2) {
@@ -401,6 +454,7 @@ function switch56() {
         reset();
         loop();
         mini_current_image = current_image;
+
     }
     setTimeout(switch56, 100);
 }
