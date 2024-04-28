@@ -7,12 +7,6 @@ function Node(x, y) {
 	this.neighbors = []; // an array of neighbors of the node 
 	this.previous = undefined; // declare the previous node 
 	this.obstacles = false; // declare the obstacles
-	this.room = undefined;
-
-	this.delObstacles = function () {
-		if (x >= 0 && y >= 0)
-			this.obstacles = flase
-	}
 
 	this.fiveFloor = function () {
 
