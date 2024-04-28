@@ -260,9 +260,7 @@ displaythreeDpath = function () {
     var EY = 5.4;
     var EX = 23;
     var Eshpere;
-    console.log(current_floor)
-    console.log(roomIndex_start)
-    console.log(roomIndex_end)
+    console.log(done)
     if (done) {
         for (var i = 0; i < threeDPath.length; i++) {
             scene.remove(threeDPath[i]);
@@ -272,7 +270,9 @@ displaythreeDpath = function () {
         console.log("removed 3dpath")
         
     }
-
+    console.log(current_floor)
+    console.log(roomIndex_start)
+    console.log(roomIndex_end)
     if (!sameFloor) {
         for (var Z = 38; Z < 53; Z++) {
 
@@ -305,6 +305,14 @@ displaythreeDpath = function () {
         Ycod = -0.4;
     }
     else if (roomNum_Start[0] == '6') {
+        PYcod = 5.2;
+        Ycod = 5.2;
+    }
+    else if (current_floor[0] == "5"){
+        PYcod = -0.4;
+        Ycod = -0.4;
+    }
+    else if (current_floor[0] == "6"){
         PYcod = 5.2;
         Ycod = 5.2;
     }
@@ -348,7 +356,7 @@ displaythreeDpath = function () {
             obj.rotateX(Math.PI);
             obj.position.set(Xcod, Ycod + 2.5, Zcod);
             threeDPath.push(obj);
-
+            
             done = true;
             
         }
@@ -425,7 +433,6 @@ function switch56() {
     if (mini_current_image != current_image) {
         reset();
         loop();
-        console.log("run")
         mini_current_image = current_image;
 
     }

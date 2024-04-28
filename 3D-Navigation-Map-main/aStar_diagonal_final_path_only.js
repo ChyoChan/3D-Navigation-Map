@@ -50,7 +50,7 @@ let roomSet = {
 	, "607": [36, 32], "608": [23, 32], "609": [16, 12]
 	, "610": [16, 20], "611": [16, 30], "6Escalator": [23, 37],
 	"5Escalator": [27, 52], "Accessible Toilet": [17, 37], "Male Toilet": [17, 34]
-	, "Female Toilet": [17, 40], "Elevator": [10, 52], "dummy": [0, 0]
+	, "Female Toilet": [17, 40], "Elevator": [10, 52], "Escalator" : [23, 37]
 };
 
 let roomIndex_start;
@@ -160,6 +160,7 @@ function reset() {
 	sameFloor = false;
 	if ((roomNum_Start in roomSet) && (roomNum_End in roomSet)) { // check the input value
 		if (current_floor == "5f") { // user staying on 5F
+
 			if (roomNum_Start[0] == "6" && roomNum_End[0] == "6") { // 6xx to 6xx
 				wrongFloor = true;
 				sameFloor = true;
@@ -180,11 +181,14 @@ function reset() {
 				}
 
 			} else { // 5xx to 5xx
+				if (roomNum_End == "Escalator") {
+					roomIndex_end = roomSet["5Escalator"];
+				}else{
+					roomIndex_end = roomSet[roomNum_End];
+				}
 				sameFloor = true;
 				roomIndex_start = roomSet[roomNum_Start];
-				roomIndex_end = roomSet[roomNum_End];
-
-
+				
 			}
 		} else if (current_floor == "6f") { // user stay on 6F
 			if (roomNum_Start[0] == "5" && roomNum_End[0] == "5") { // 5xx to 5xx
@@ -201,10 +205,6 @@ function reset() {
 			} else if (roomNum_Start[0] == "5") { // 5xx to 6xx 
 				roomIndex_start = roomSet["6Escalator"];
 				roomIndex_end = roomSet[roomNum_End];
-				// if (isMinimap) {
-				// 	roomIndex_start = roomSet[roomNum_End];
-				// 	roomIndex_end = roomSet["6Escalator"];
-				// }
 
 				if (autoturn) {
 					turn5f();
@@ -212,12 +212,12 @@ function reset() {
 
 			} else { // 6xx to 6xx
 				if (roomNum_End == "Escalator") {
-					roomNum_End = "6Escalator"
+					roomIndex_end = roomSet["6Escalator"];
+				}else{
+					roomIndex_end = roomSet[roomNum_End];
 				}
 				sameFloor = true;
 				roomIndex_start = roomSet[roomNum_Start];
-				roomIndex_end = roomSet[roomNum_End];
-
 			}
 		}
 		start = grid.at(roomIndex_start[0]).at(roomIndex_start[1]); // define the starting point
@@ -313,11 +313,10 @@ function draw() { // if will self-loopping automatically by the p5.jsxs
 		test = path;
 		testb = (test.length > 1)
 		
-		console.log(current_floor)
 		if (threeDActive) {
 			p = displaythreeDpath();
 		}
-		if (!done && roomIndex_start == roomSet["5Escalator"] && threeDActive) {
+		if (!done && (roomIndex_start == roomSet["5Escalator"]) && threeDActive) {
 			current_floor = "6f"
 			reset();
 			loop();
