@@ -410,9 +410,10 @@ function switch56() {
         }
         endShape();
 
-        stroke('orange');
-        strokeWeight(6);
-        point(cameraX * o * (275 / 1000), cameraZ * k * (495 / 1800));
+        stroke('black');
+        fill('orange')
+        strokeWeight(1);
+        ellipse(cameraX * o * (275 / 1000), cameraZ * k * (495 / 1800), 5, 5);
 
 
         if(testb){
