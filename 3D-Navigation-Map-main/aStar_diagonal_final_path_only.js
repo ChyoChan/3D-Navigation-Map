@@ -123,8 +123,8 @@ function setup() {
 	h = height / rows; // height of each 
 
 	noLoop();
-	o = w;
-	k = h;
+	o = w; // for min map
+	k = h; // for min map
 }
 
 function reset() {
