@@ -500,6 +500,8 @@ function canvasmap() {
 canvasmap();
 
 function displayPathTwoD() {
+
+
 		noFill();
 		stroke('blue');
 		strokeWeight(w / 4);
@@ -513,4 +515,7 @@ function displayPathTwoD() {
 		endShape();
 		start.show_node('green', controls.view.x, controls.view.y);
 		end.show_node('red', controls.view.x, controls.view.y);
+
+
+	//grid[24][36].show_node('red');
 }

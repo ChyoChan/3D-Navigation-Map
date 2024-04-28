@@ -63,7 +63,7 @@ function init() {
 
     const loader = new GLTFLoader().setPath('map/');
 
-    loader.load('56_13.0.gltf', function (gltf) { // load the 3D map to the scene
+    loader.load('56_16.0.gltf', function (gltf) { // load the 3D map to the scene
         const mesh = gltf.scene; // the object of the map
         mesh.position.set(0, -0.5, 0); // set position of the map
         scene.add(mesh); // add the map to the scene 
@@ -86,7 +86,7 @@ function init() {
 // Controller 
 function PLControls() {
     controllerCamera.position.set(30, 15, 36); // set position of the camera 
-    controls.getObject().lookAt(26, 9, 36); // look at the maps
+    controls.getObject().lookAt(27, -0.4, 56); // look at the maps
     scene.add(controllerCamera);
 
     threeDContainer.addEventListener('click', () => { controls.lock(); }, false); // click to lick the mouse in the scene
@@ -183,31 +183,37 @@ function check() {
         if (controls.getObject().position.y < -9) {
             velocity.y = 0;
             controls.getObject().position.set(30, 15, 36);
+            controls.getObject().lookAt(27, -0.4, 56); // look at the maps
             canJump = true;
         }
         if (controls.getObject().position.x < 1) {
             velocity.x = 0;
             controls.getObject().position.set(30, 15, 36);
+            controls.getObject().lookAt(27, -0.4, 56); // look at the maps
             canJump = true;
         }
         if (controls.getObject().position.z < 1) {
             velocity.z = 0;
             controls.getObject().position.set(30, 15, 36);
+            controls.getObject().lookAt(27, -0.4, 56); // look at the maps
             canJump = true;
         }
         if (controls.getObject().position.x > 55.8) {
             velocity.x = 0;
             controls.getObject().position.set(30, 15, 36);
+            controls.getObject().lookAt(27, -0.4, 56); // look at the maps
             canJump = true;
         }
         if (controls.getObject().position.z > 89) {
             velocity.z = 0;
             controls.getObject().position.set(30, 15, 36);
+            controls.getObject().lookAt(27, -0.4, 56); // look at the maps
             canJump = true;
         }
         if (controls.getObject().position.y > 18) {
             velocity.y = 0;
             controls.getObject().position.set(30, 15, 36);
+            controls.getObject().lookAt(27, -0.4, 56); // look at the maps
             canJump = true;
         }
     }
