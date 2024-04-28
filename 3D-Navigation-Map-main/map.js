@@ -410,8 +410,8 @@ function switch56() {
         }
         endShape();
 
-        stroke('black');
-        strokeWeight(4);
+        stroke('orange');
+        strokeWeight(6);
         point(cameraX * o * (275 / 1000), cameraZ * k * (495 / 1800));
 
 
