@@ -49,8 +49,8 @@ let roomSet = {
 	, "604": [40, 47], "605": [40, 39], "606": [46, 32]
 	, "607": [36, 32], "608": [23, 32], "609": [16, 12]
 	, "610": [16, 20], "611": [16, 30], "6Escalator": [23, 37],
-	"5Escalator": [27, 52], "Accessible Toilet": [17, 37], "Male Toilet": [17, 34]
-	, "Female Toilet": [17, 40], "Elevator": [10, 52], "Escalator" : [23, 37]
+	"5Escalator": [27, 52], "Accessible Toilet": [17, 37], "Female Toilet": [17, 34]
+	, "Male Toilet": [17, 40], "Elevator": [10, 52], "Escalator" : [23, 37]
 };
 
 let roomIndex_start;
