@@ -183,11 +183,17 @@ function reset() {
 			} else { // 5xx to 5xx
 				if (roomNum_End == "Escalator") {
 					roomIndex_end = roomSet["5Escalator"];
+
 				}else{
 					roomIndex_end = roomSet[roomNum_End];
 				}
+				if (roomNum_Start == "Escalator") {
+					roomIndex_start = roomSet["5Escalator"];
+
+				}else{
+					roomIndex_start = roomSet[roomNum_Start];
+				}
 				sameFloor = true;
-				roomIndex_start = roomSet[roomNum_Start];
 				
 			}
 		} else if (current_floor == "6f") { // user stay on 6F
@@ -216,8 +222,12 @@ function reset() {
 				}else{
 					roomIndex_end = roomSet[roomNum_End];
 				}
+				if (roomNum_Start == "Escalator") {
+					roomIndex_start = roomSet["6Escalator"];
+				}else{
+					roomIndex_start = roomSet[roomNum_Start];
+				}
 				sameFloor = true;
-				roomIndex_start = roomSet[roomNum_Start];
 			}
 		}
 		start = grid.at(roomIndex_start[0]).at(roomIndex_start[1]); // define the starting point
