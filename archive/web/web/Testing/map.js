@@ -1,0 +1,249 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+var clock = new THREE.Clock();
+
+const threeDContainer = document.getElementById('mapcontainer');
+const status = document.getElementById('status'); 
+
+var moveForward = false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
+var moveUp = false;
+var moveDown = false;
+
+// var canJump = false;
+// var spaceUp = true;
+// var moveUpSpeed = 100;
+let isCanvasShow = true;
+
+var velocity = new THREE.Vector3(); // moving speed 
+// var direction = new THREE.Vector3(); // moving direction
+// var rotation = new THREE.Vector3(); // camera direction
+
+// Set up Scene, Camera, and renderer
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight); // Scene size
+renderer.setClearColor(0xeeeeee); //set default color when no model in the scene
+renderer.setPixelRatio(window.devicePixelRatio); //set ratio to different device
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+var controls = new PointerLockControls(camera, threeDContainer);
+const controllerCamera = controls.getObject();
+
+scene.add(new THREE.GridHelper(500,500));
+scene.add(new THREE.AxesHelper(5));
+
+
+// add reference line
+var group = new THREE.Group();
+var xAxis = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(), 10, 0xff0000);
+var yAxis = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(), 10, 0x0000ff);
+var zAxis = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(), 10, 0x00ff00);
+group.add(xAxis);
+group.add(yAxis);
+group.add(zAxis);
+scene.add(group);
+
+// test the path
+var path = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(7.5, 1, 11.5), 4.2, 0x0cf0e1);
+scene.add(path);
+// set a shpere in the origin
+const circle = new THREE.SphereGeometry(0.3, 64, 32);
+const material = new THREE.MeshBasicMaterial( {color: 0xff0000});
+const shpere = new THREE.Mesh(circle, material);
+scene.add(shpere);
+shpere.position.set(0, 0, 0);
+
+const box = new THREE.BoxGeometry(1, 1, 1);
+const meterial = new THREE.MeshBasicMaterial( {
+color : 0xff0000});
+const oj = new THREE.Mesh(box, meterial);
+scene.add(oj)
+oj.position.set(27, 0, 56);
+
+const box1 = new THREE.BoxGeometry(1, 1, 1);
+const meterial1 = new THREE.MeshBasicMaterial( {
+color : 0xff0000});
+const oj1 = new THREE.Mesh(box1, meterial1);
+scene.add(oj1)
+oj1.position.set(40, 0, 39);
+
+// Load 3D model
+function init(){
+    const loader = new GLTFLoader().setPath('test/');
+    loader.load('5floor_2.glb', function(gltf) { // load the 3D map to the scene
+        const mesh = gltf.scene; // the object of the map
+        mesh.position.set(28, 0, 45.5); // set position of the map  
+        scene.add(mesh); // add the map to the scene 
+
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(0,50,0);
+        scene.add(pointLight);
+        
+    },function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	} );
+    document.getElementById("mapcontainer").appendChild(renderer.domElement);
+    PLControls();
+}
+
+// Controller 
+function PLControls(){
+    controllerCamera.position.set(0, 30, 0); // set position of the camera 
+    controls.getObject().lookAt(25, 0, -30); // look at the maps
+    scene.add(controllerCamera);
+    
+    threeDContainer.addEventListener('click', () => {controls.lock();}, false); // click to lick the mouse in the scene
+    controls.addEventListener('lock', () => {status.textContent = 'Locked';}); // check when lock 
+    controls.addEventListener('unlock', () => {status.textContent = 'unlocked';}); // check when unlock
+
+    const onKeyDown = function (event) {
+        switch (event.code) {
+            case 'ArrowUp':
+            case 'KeyW':
+                moveForward = true;
+                break;
+            case 'ArrowLeft':
+            case 'KeyA':
+                moveLeft = true;                                                                                                                     
+                break;
+            case 'ArrowDown':
+            case 'KeyS':
+                moveBackward = true;
+                break;
+            case 'ArrowRight':
+            case 'KeyD':
+                moveRight = true;
+                break;
+            case 'ControlLeft':
+                moveUp = true;
+                break;
+            case 'ShiftLeft':
+                moveDown = true;
+                break;
+        }
+    };
+    
+    const onKeyUp = function(event) {
+        switch(event.code) {
+            case 'ArrowUp':
+            case 'KeyW':
+                moveForward = false;
+                break;
+            case 'ArrowLeft':
+            case 'KeyA':
+                moveLeft = false;
+                break;
+            case 'ArrowDown':
+            case 'KeyS':
+                moveBackward = false;
+                break;
+            case 'ArrowRight':
+            case 'KeyD':
+                moveRight = false;
+                break;
+            case 'ControlLeft':
+                moveUp = false;
+                break;
+            case 'ShiftLeft':
+                moveDown = false;
+                break;
+        }
+    };
+    document.addEventListener('keydown', onKeyDown, false);
+    document .addEventListener('keyup', onKeyUp, false);
+}
+var i = 0;
+function check(){
+    if (controls.isLocked === true) {
+        var delta = clock.getDelta(); // refresh time
+        velocity.x -= velocity.x * 10.0 * delta;
+        velocity.z -= velocity.z * 10.0 * delta;
+        velocity.y -= velocity.y * 10.0 * delta;
+
+        //velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass (down speed)
+        // direction.z = Number(moveForward) - Number(moveBackward);
+        // direction.x = Number(moveLeft) - Number(moveRight);
+        // direction.normalize(); // Ensures consistent movements in all directions
+
+        // if (i === 284) {
+        //     console.log(direction.z);
+        //     i = 0;
+        // }
+        // i ++;
+        // rotation.copy(controllerCamera.getWorldDirection().multiply(new THREE.Vector3(-1, 0 ,-1)));
+        // rotation.applyMatrix4(new THREE.Matrix4());
+        
+        if(moveForward) velocity.z -= 200.0 * delta;
+        if(moveBackward) velocity.z -= -200.0 * delta;
+        if(moveLeft) velocity.x -= 200.0 * delta;
+        if(moveRight) velocity.x -= -200.0 * delta;
+        if(moveUp) velocity.y -= -200.0 * delta;
+        if(moveDown) velocity.y -= 200.0 * delta;
+        
+        controls.getObject().translateX(velocity.x * delta); // update the x-axis of camera
+        controls.getObject().translateY(velocity.y * delta); // update the y-axis of camera
+        controls.getObject().translateZ(velocity.z * delta); // update the z-axis of camera
+        
+
+        // if (controls.getObject().position.y < -100) {
+        //     velocity.y = 0;
+        //     controls.getObject().position.set(0, 0, 0);
+        //     canJump = true;
+        // }
+    }
+}
+
+// Render the scene
+function render() {
+    requestAnimationFrame(render);
+    check();
+    renderer.render(scene, camera);
+};
+
+document.addEventListener("DOMContentLoaded", function(){
+    function switchmap() {
+        document.getElementById("switchmap").addEventListener("click", function(){
+            if (isCanvasShow) {
+                const canvas = document.querySelector('canvas');
+                canvas.parentNode.removeChild(canvas);
+                init();
+                render();
+                isCanvasShow = false;
+            } else {
+                const scene3D = document.getElementById('mapcontainer');
+                while (scene3D.firstChild) {
+                    scene3D.removeChild(scene3D.firstChild);
+                }
+                const newCanvas = document.createElement('canvas');
+                newCanvas.width = window.innerWidth;
+                newCanvas.height = window.innerHeight;
+                scene3D.appendChild(newCanvas);
+                setup();
+                isCanvasShow = true;
+            }
+        });
+    }
+    switchmap();
+})
+
+// Resize window
+window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+})

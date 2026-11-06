@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e5b47">
+  <title>Campus Navigation · HKU SPACE</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script type="importmap">
+    {"imports":{"three":"https://unpkg.com/three@v0.153.0/build/three.module.js","three/addons/":"https://unpkg.com/three@v0.153.0/examples/jsm/"}}
+  </script>
+</head>
+<body>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-map" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Zm6-2v16m6-14v16"/></symbol>
+    <symbol id="icon-route" viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><path d="M7 5h8a4 4 0 0 1 0 8H9a3 3 0 0 0 0 6h8"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="icon-fit" viewBox="0 0 24 24"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m6 0h5v-5"/></symbol>
+    <symbol id="icon-reset" viewBox="0 0 24 24"><path d="M4 9a8 8 0 1 1 0 6m0-12v6h6"/></symbol>
+    <symbol id="icon-cube" viewBox="0 0 24 24"><path d="m12 3 9 5v8l-9 5-9-5V8l9-5Zm0 10 9-5M3 8l9 5v8m-5-15 10 5"/></symbol>
+    <symbol id="icon-layers" viewBox="0 0 24 24"><path d="m12 3 10 6-10 6L2 9l10-6ZM2 14l10 6 10-6"/></symbol>
+    <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="icon-up" viewBox="0 0 24 24"><path d="M12 20V4m-6 6 6-6 6 6"/></symbol>
+    <symbol id="icon-down" viewBox="0 0 24 24"><path d="M12 4v16m-6-6 6 6 6-6"/></symbol>
+    <symbol id="icon-left" viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></symbol>
+  </svg>
+  <a class="skip-link" href="#map-viewport">Skip to map</a>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#icon-map"/></svg></span>
+      <div><span class="brand-name">HKU SPACE</span><span class="brand-description">Campus navigation</span></div>
+    </div>
+    <span class="campus-floors"><svg class="icon" aria-hidden="true"><use href="#icon-layers"/></svg> Floors 5 &amp; 6</span>
+  </header>
+  <main class="workspace">
+    <aside class="route-panel" aria-label="Route planner">
+      <section id="route-planner" class="route-planner">
+        <div id="route-fields">
+        <h2>Where to?</h2>
+        <p class="planner-intro">A clearer way around campus.</p>
+        <form id="route-form" novalidate>
+          <div class="field">
+            <label for="start_input"><span class="point-label point-start">A</span> From</label>
+            <input id="start_input" name="start" list="destinations" placeholder="Room or facility" required autocomplete="off" aria-describedby="destination-hint">
+          </div>
+          <div class="field">
+            <label for="end_input"><span class="point-label point-end">B</span> To</label>
+            <input id="end_input" name="end" list="destinations" placeholder="Where are you going?" required autocomplete="off" aria-describedby="destination-hint">
+          </div>
+          <datalist id="destinations"></datalist>
+          <p id="destination-hint" class="field-hint">Try 501 or Elevator · 6F. Facilities include their floor.</p>
+          <button id="run" class="button-primary" type="submit">Find route <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+        </form>
+        </div>
+        <div id="errormessage" class="message message-error" role="alert" hidden><p id="error-text"></p></div>
+        <div id="empty-state" class="empty-state"><svg class="icon" aria-hidden="true"><use href="#icon-route"/></svg><p>Choose two places.<br>Your route will appear on the map.</p></div>
+        <section id="route-summary" class="route-summary" aria-labelledby="route-heading" hidden>
+          <div class="route-summary-heading">
+            <div><h3 id="route-heading">Your route</h3><p id="route-description" class="route-description"></p></div>
+            <button id="edit-route" class="edit-route" type="button" aria-controls="route-fields" aria-expanded="true">Hide fields</button>
+          </div>
+          <div id="route-steps" class="route-steps" role="group" aria-label="Route floors"></div>
+          <p id="infomsg" class="route-note" role="status" hidden><span class="full-route-note">Outlined markers show the escalator between floors. Select a floor to follow that part of your route.</span><span class="compact-route-note">Via escalator between floors.</span></p>
+          <p id="same-floor-note" class="route-note">Follow the highlighted path on the floor plan.</p>
+        </section>
+        <p id="route-announcement" class="sr-only" role="status" aria-live="polite"></p>
+      </section>
+      <details id="legend-details" class="legend">
+        <summary>Map legend <svg class="icon" aria-hidden="true"><use href="#icon-chevron"/></svg></summary>
+        <ul class="legend-list">
+          <li><img src="assets/icons/accessibletoilet.png" alt="" width="28" height="28"><span>Accessible toilet</span></li>
+          <li><img src="assets/icons/maletoilet.png" alt="" width="28" height="28"><span>Male toilet</span></li>
+          <li><img src="assets/icons/femaletoilet.png" alt="" width="28" height="28"><span>Female toilet</span></li>
+          <li><img src="assets/icons/escalator.png" alt="" width="28" height="28"><span>Escalator</span></li>
+          <li><img src="assets/icons/lift.png" alt="" width="28" height="28"><span>Elevator</span></li>
+          <li><img src="assets/icons/classroom.png" alt="" width="28" height="28"><span>Classroom</span></li>
+          <li><img src="assets/icons/landscapedarea.png" alt="" width="28" height="28"><span>Landscaped area</span></li>
+        </ul>
+      </details>
+    </aside>
+    <section class="map-workspace" aria-label="Campus map">
+      <div class="map-panel">
+        <div class="map-toolbar">
+          <div class="map-title"><h1>Campus map</h1><span id="floor-label">Floor 5</span></div>
+          <div class="view-switch" role="group" aria-label="Map view">
+            <button id="switch2d" type="button" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#icon-map"/></svg>2D map</button>
+            <button id="switchmap" type="button" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#icon-cube"/></svg><span id="three-d-label">3D view</span></button>
+          </div>
+        </div>
+        <div id="map-viewport" class="map-viewport" tabindex="-1">
+          <div id="twodmapcontainer" class="map-surface"></div>
+          <div id="floor-controls" class="floor-controls" role="group" aria-label="Displayed floor">
+            <button id="map_5f" type="button" aria-label="Show floor 5" aria-pressed="true">5F</button>
+            <button id="map_6f" type="button" aria-label="Show floor 6" aria-pressed="false">6F</button>
+          </div>
+          <div id="zoom-controls" class="zoom-controls" role="group" aria-label="Map zoom">
+            <button id="zoomin" type="button" aria-label="Zoom in" title="Zoom in"><svg class="icon" aria-hidden="true"><use href="#icon-plus"/></svg></button>
+            <button id="fit-route" type="button" aria-label="Fit route" title="Fit route" disabled><svg class="icon" aria-hidden="true"><use href="#icon-route"/></svg></button>
+            <button id="fit-map" type="button" aria-label="Fit map" title="Fit map"><svg class="icon" aria-hidden="true"><use href="#icon-fit"/></svg></button>
+            <button id="zoomout" type="button" aria-label="Zoom out" title="Zoom out"><svg class="icon" aria-hidden="true"><use href="#icon-minus"/></svg></button>
+          </div>
+          <div id="threedcontainer" class="map-surface" hidden>
+            <div id="threedmodel"></div>
+            <aside class="minimap-shell" aria-label="Live floor plan"><div class="minimap-heading">Floor plan <span id="minimap-floor">5F</span></div><div id="minimapContainer"></div><button id="reset-view" class="reset-view" type="button" aria-label="Reset 3D view"><svg class="icon" aria-hidden="true"><use href="#icon-reset"/></svg>Reset view</button></aside>
+            <p class="walk-help"><span class="desktop-help">Click to look around. WASD to move. Esc to release.</span><span class="touch-help">Drag to look. Use the arrows to move.</span></p>
+            <div id="movement-controls" class="movement-controls" role="group" aria-label="3D movement">
+              <div class="direction-pad">
+                <button type="button" data-move="forward" aria-label="Move forward"><svg class="icon" aria-hidden="true"><use href="#icon-up"/></svg></button>
+                <button type="button" data-move="left" aria-label="Move left"><svg class="icon" aria-hidden="true"><use href="#icon-left"/></svg></button>
+                <button type="button" data-move="back" aria-label="Move backward"><svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg></button>
+                <button type="button" data-move="right" aria-label="Move right"><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+              </div>
+              <div class="vertical-pad"><button type="button" data-move="up" aria-label="Move up">Up</button><button type="button" data-move="down" aria-label="Move down">Down</button></div>
+            </div>
+          </div>
+          <div id="model-loading" class="model-loading" role="status" hidden><svg class="icon" aria-hidden="true"><use href="#icon-cube"/></svg><p>Opening the 3D campus…</p><span>Loading the model and textures</span></div>
+        </div>
+        <div class="map-footer"><p id="map-help">Drag to pan. Scroll or pinch to zoom.</p><div class="route-key"><span><i class="key-start">A</i> Start</span><span><i class="key-end">B</i> Destination</span><span><i class="key-transfer"></i> Transfer</span></div></div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

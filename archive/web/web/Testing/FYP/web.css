@@ -1,0 +1,37 @@
+html, body {
+    height: 100%;
+  }
+
+#map
+  {
+    margin: 0;
+    text-align: "center";
+}
+
+
+.choose { 
+  position: relative;  
+  top: 0px;
+  left: 0px;
+  height: 50px;
+}
+
+#selector_label_start {
+    font-size: 50px;
+}
+
+#start {
+    font-size: 50px;
+}
+
+#selector_label_end {
+    font-size: 50px;
+}
+
+#end {
+    font-size: 50px;
+}
+#run{
+    width: 100px;
+    height: 100px;
+}
