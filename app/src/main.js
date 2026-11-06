@@ -1,4 +1,5 @@
 import { DESTINATIONS, findRoute } from './navigation.js';
+import { matchDestinationInput } from './destination-input.js';
 import { createMap2D } from './map-2d.js';
 
 const element = id => document.getElementById(id);
@@ -9,6 +10,7 @@ let map3D = null;
 let loading3D = null;
 let threeDActive = false;
 let wants3D = false;
+let routeQuery = '';
 
 for (const name of Object.keys(DESTINATIONS)) {
     const option = document.createElement('option');
@@ -61,8 +63,13 @@ function renderRoute() {
     element('infomsg').hidden = !route || route.segments.length < 2;
     element('same-floor-note').hidden = !route || route.segments.length > 1;
     element('route-steps').replaceChildren();
+    element('share-status').textContent = '';
+    element('share-fallback').hidden = true;
     updateFloorLabels();
-    if (!route) return;
+    if (!route) {
+        element('route-announcement').textContent = 'No route selected. Choose two places.';
+        return;
+    }
     element('route-description').textContent = `${route.from} to ${route.to}`;
     for (const segment of route.segments) {
         const button = document.createElement('button');
@@ -81,29 +88,109 @@ function renderRoute() {
     updateFloorLabels();
 }
 
-element('route-form').addEventListener('submit', event => {
-    event.preventDefault();
-    const from = element('start_input').value.trim();
-    const to = element('end_input').value.trim();
-    const invalidStart = !Object.hasOwn(DESTINATIONS, from);
-    const invalidEnd = !Object.hasOwn(DESTINATIONS, to);
+function submitRoute(focus) {
+    const start = matchDestinationInput(element('start_input').value);
+    const end = matchDestinationInput(element('end_input').value);
+    const invalidStart = !start.label;
+    const invalidEnd = !end.label;
     for (const [id, invalid] of [['start_input', invalidStart], ['end_input', invalidEnd]]) {
         element(id).setAttribute('aria-invalid', String(invalid));
         element(id).setAttribute('aria-describedby', invalid ? 'destination-hint error-text' : 'destination-hint');
     }
-    route = invalidStart || invalidEnd ? null : findRoute(from, to, floor);
+    if (invalidStart || invalidEnd) {
+        const invalid = invalidStart ? start : end;
+        const field = invalidStart ? 'starting point' : 'destination';
+        const suggestion = invalid.suggestions.length
+            ? ` Try ${invalid.suggestions.join(' or ')}.`
+            : ' Choose a room or facility from the suggestions.';
+        setPlannerExpanded(true);
+        const previousRoute = route ? ' Your previous route is still shown.' : '';
+        showError(`Choose a ${field} with its floor.${suggestion}${previousRoute}`);
+        if (focus) element(invalidStart ? 'start_input' : 'end_input').focus();
+        return false;
+    }
+
+    const nextRoute = findRoute(start.label, end.label, floor);
+    if (!nextRoute) {
+        setPlannerExpanded(true);
+        showError('No route could be found between these places. Choose another destination.');
+        return false;
+    }
+    route = nextRoute;
+    element('start_input').value = route.from;
+    element('end_input').value = route.to;
     element('errormessage').hidden = true;
     renderRoute();
-    if (route) {
-        updateFloor(route.segments[0].floor);
-        fitRoute();
-        setPlannerExpanded(false, true);
-    } else {
+    updateFloor(route.segments[0].floor);
+    fitRoute();
+    setPlannerExpanded(false, focus);
+    return true;
+}
+
+function routeURL() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('from', route.from);
+    url.searchParams.set('to', route.to);
+    return url.href;
+}
+
+function updateRouteURL(method) {
+    const url = routeURL();
+    routeQuery = JSON.stringify([route.from, route.to]);
+    if (url !== window.location.href) window.history[method](null, '', url);
+}
+
+function restoreRouteFromURL() {
+    const params = new URL(window.location.href).searchParams;
+    const from = params.get('from');
+    const to = params.get('to');
+    const query = JSON.stringify([from, to]);
+    if (query === routeQuery) return;
+    routeQuery = query;
+    if (from === null && to === null) {
+        const hadRoute = Boolean(route);
+        route = null;
+        element('start_input').value = '';
+        element('end_input').value = '';
+        element('errormessage').hidden = true;
+        for (const id of ['start_input', 'end_input']) {
+            element(id).setAttribute('aria-invalid', 'false');
+            element(id).setAttribute('aria-describedby', 'destination-hint');
+        }
+        renderRoute();
         setPlannerExpanded(true);
-        showError(invalidStart ? 'Choose a starting point from the suggestions.' : 'Choose a destination with its floor from the suggestions.');
-        element(invalidStart ? 'start_input' : 'end_input').focus();
+        if (hadRoute) map.fit();
+        return;
+    }
+    element('start_input').value = from ?? '';
+    element('end_input').value = to ?? '';
+    if (submitRoute(false)) updateRouteURL('replaceState');
+}
+
+element('route-form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (submitRoute(true)) updateRouteURL('pushState');
+});
+
+element('copy-route').addEventListener('click', async () => {
+    if (!route) return;
+    const sharedRoute = route;
+    const url = routeURL();
+    element('share-status').textContent = '';
+    element('share-fallback').hidden = true;
+    try {
+        await window.navigator.clipboard.writeText(url);
+        if (route === sharedRoute) element('share-status').textContent = 'Link copied.';
+    } catch {
+        if (route !== sharedRoute) return;
+        element('share-fallback').hidden = false;
+        element('share-status').textContent = 'Select and copy the link below.';
+        element('route-link').value = url;
+        element('route-link').focus();
+        element('route-link').select();
     }
 });
+window.addEventListener('popstate', restoreRouteFromURL);
 
 for (const value of [5, 6]) {
     element(`map_${value}f`).addEventListener('click', () => {
@@ -210,3 +297,4 @@ for (const button of document.querySelectorAll('[data-move]')) {
 }
 
 updateFloor(floor);
+restoreRouteFromURL();

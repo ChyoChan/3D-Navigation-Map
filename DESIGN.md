@@ -197,6 +197,10 @@ Buttons, inputs, summaries, links and the map canvas receive a visible (3px) eve
 
 White fields have the field-border stroke, control corners and dark text. Visible From/To labels pair with A/B marker shapes. Native destination suggestions remain available through a datalist; facilities include a floor suffix such as `Elevator · 6F`. Hover strengthens the border to evergreen; invalid fields use the error color, `aria-invalid` and linked error text. The error container uses `role="alert"`; route updates use a polite status announcement.
 
+Case, common separators, room prefixes and lift aliases resolve to the same canonical destination labels. Ambiguous facilities still require a floor. Invalid edits reveal specific correction suggestions and explain that the previous route is still shown, without resetting either map.
+
+Copy route link sits beside the route-floor controls, wrapping within the planner at narrow widths. It reuses their bordered white control style and the (44px) target floor. Success uses a short polite status; blocked clipboard access reveals a labelled read-only field for manual copying. Shared links restore the route without stealing focus.
+
 ### Mode and Floor Selection
 
 The 2D/3D switch is a small neutral track containing text-labelled buttons. Its selected mode is evergreen with white text; an unselected hover is sage. Floor controls are a white bordered group with sage selected options and evergreen text. Both expose `aria-pressed` within a labelled group. Route-summary floor buttons repeat the sage selection with a green border and return to the corresponding 2D floor without discarding the submitted route.

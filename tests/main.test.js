@@ -24,6 +24,7 @@ class Element {
     appendChild(child) { this.children.push(child); return child; }
     replaceChildren(...children) { this.children = children; }
     focus() { this.focused = true; globalThis.document.activeElement = this; }
+    select() { this.selected = true; }
     setPointerCapture(id) { this.capturedPointer = id; }
     addEventListener(event, handler) {
         const handlers = this.listeners.get(event) ?? [];
@@ -37,14 +38,14 @@ class Element {
     }
 }
 
-async function setup(t, { mobile = true } = {}) {
+async function setup(t, { mobile = true, url = 'http://127.0.0.1:8000/' } = {}) {
     const directory = await mkdtemp(path.join(tmpdir(), 'campus-main-test-'));
     const elements = new Map();
     const element = id => {
         if (!elements.has(id)) elements.set(id, new Element());
         return elements.get(id);
     };
-    for (const id of ['errormessage', 'route-summary', 'infomsg', 'threedcontainer', 'model-loading']) {
+    for (const id of ['errormessage', 'route-summary', 'infomsg', 'threedcontainer', 'model-loading', 'share-fallback']) {
         element(id).hidden = true;
     }
     element('edit-route').setAttribute('aria-expanded', 'true');
@@ -68,7 +69,29 @@ async function setup(t, { mobile = true } = {}) {
         resetView: () => { resetCount++; }
     };
     let load = async () => map3D;
-    globalThis.window = { matchMedia: () => ({ matches: mobile }) };
+    const windowListeners = new Map();
+    const copied = [];
+    let copy = async () => {};
+    const history = {
+        entries: [url], index: 0, pushes: 0, replacements: 0,
+        pushState(_state, _title, value) {
+            this.entries.splice(this.index + 1);
+            this.entries.push(value);
+            this.index++;
+            this.pushes++;
+            window.location.href = value;
+        },
+        replaceState(_state, _title, value) {
+            this.entries[this.index] = value;
+            this.replacements++;
+            window.location.href = value;
+        }
+    };
+    globalThis.window = {
+        matchMedia: () => ({ matches: mobile }), location: { href: url }, history,
+        navigator: { clipboard: { writeText: async value => { copied.push(value); return copy(value); } } },
+        addEventListener(name, handler) { windowListeners.set(name, handler); }
+    };
     globalThis.document = {
         getElementById: element,
         createElement: () => new Element(),
@@ -101,16 +124,29 @@ async function setup(t, { mobile = true } = {}) {
     await writeFile(mock3DPath, 'export const createMap3D = (...args) => globalThis.__mainCreateMap3D(...args);\n');
     const source = (await readFile(new URL('../app/src/main.js', import.meta.url), 'utf8'))
         .replace("'./navigation.js'", JSON.stringify(new URL('../app/src/navigation.js', import.meta.url).href))
+        .replace("'./destination-input.js'", JSON.stringify(new URL('../app/src/destination-input.js', import.meta.url).href))
         .replace("import { createMap2D } from './map-2d.js';", 'const createMap2D = globalThis.__mainMapFactory;')
         .replace("import('./map-3d.js')", `import(${JSON.stringify(pathToFileURL(mock3DPath).href)})`);
     const mainPath = path.join(directory, 'main.mjs');
     await writeFile(mainPath, source);
     await import(pathToFileURL(mainPath).href);
     return {
-        element, drawn, draws, buttons, activations, threeDRoutes, movements, map3D,
+        element, drawn, draws, buttons, activations, threeDRoutes, movements, map3D, history, copied,
         get createCount() { return createCount; },
         get resetCount() { return resetCount; },
         setLoad(value) { load = value; },
+        setCopy(value) { copy = value; },
+        get url() { return window.location.href; },
+        async go(offset) {
+            history.index += offset;
+            assert.ok(history.index >= 0 && history.index < history.entries.length);
+            window.location.href = history.entries[history.index];
+            await windowListeners.get('popstate')();
+        },
+        async visit(value) {
+            history.pushState(null, '', value);
+            await windowListeners.get('popstate')();
+        },
         position(value) { onPosition(value); },
         async submit(from, to) {
             element('start_input').value = from;
@@ -149,15 +185,15 @@ test('route summaries, floor browsing and validation retain the submitted route'
     assert.equal(draws.filter(([name]) => name === 'fit').length, 1, 'an irrelevant floor falls back to the full plan');
     assert.equal(element('route-description').textContent, '501 to Male Toilet · 5F');
     await element('route-form').fire('submit');
-    assert.equal(drawn.setRoute, null);
-    assert.equal(element('route-summary').hidden, true);
+    assert.equal(drawn.setRoute, submitted);
+    assert.equal(element('route-summary').hidden, false);
     assert.equal(element('errormessage').hidden, false);
     assert.equal(element('start_input').attributes['aria-invalid'], 'false');
     assert.equal(element('end_input').attributes['aria-invalid'], 'true');
     assert.equal(element('end_input').attributes['aria-describedby'], 'destination-hint error-text');
     assert.equal(element('end_input').focused, true);
     await env.submit('constructor', '501');
-    assert.equal(drawn.setRoute, null);
+    assert.equal(drawn.setRoute, submitted);
     assert.equal(element('start_input').attributes['aria-invalid'], 'true');
     assert.equal(element('start_input').focused, true);
     assert.match(element('error-text').textContent, /starting point/);
@@ -331,7 +367,7 @@ test('mobile route summary collapses only valid submissions and editing retains 
     assert.equal(document.activeElement, element('edit-route'));
     for (const generic of ['Elevator', 'Male Toilet', 'Escalator']) {
         await env.submit('611', generic);
-        assert.equal(drawn.setRoute, null, `${generic} must not bypass public destination validation`);
+        assert.equal(drawn.setRoute, submitted, `${generic} keeps the last valid route and must still name a floor`);
         assert.equal(element('route-planner').classList.contains('is-compact'), false);
         assert.equal(element('edit-route').getAttribute('aria-expanded'), 'true');
         assert.equal(element('end_input').getAttribute('aria-invalid'), 'true');
@@ -351,4 +387,143 @@ test('desktop submissions keep focus in the existing interaction instead of the 
     assert.equal(document.activeElement, element('run'));
     assert.equal(element('start_input').value, '501');
     assert.equal(element('end_input').value, '611');
+});
+
+test('forgiving submissions canonicalize the fields and route URL without duplicate history', async t => {
+    const env = await setup(t, { url: 'http://127.0.0.1:8000/?context=campus#map-viewport' });
+    await env.submit(' room 611 ', 'LIFT - 6f');
+    assert.equal(env.element('start_input').value, '611');
+    assert.equal(env.element('end_input').value, 'Elevator · 6F');
+    assert.deepEqual(env.drawn.setRoute.segments.map(segment => segment.floor), [6]);
+    const url = new URL(env.url);
+    assert.equal(url.searchParams.get('from'), '611');
+    assert.equal(url.searchParams.get('to'), 'Elevator · 6F');
+    assert.equal(url.searchParams.get('context'), 'campus');
+    assert.equal(url.hash, '#map-viewport');
+    assert.equal(env.history.pushes, 1);
+    await env.submit('611', 'elevator 6');
+    assert.equal(env.history.pushes, 1);
+});
+
+test('invalid edits retain the route, 3D camera, URL and draft while suggesting a specific correction', async t => {
+    const env = await setup(t);
+    await env.submit('501', '611');
+    await env.element('switchmap').fire('click');
+    const submitted = env.drawn.setRoute;
+    const url = env.url;
+    const threeDUpdates = env.threeDRoutes.length;
+    await env.submit('501', 'elevator 7f');
+    assert.equal(env.drawn.setRoute, submitted);
+    assert.equal(env.threeDRoutes.length, threeDUpdates);
+    assert.equal(env.element('threedcontainer').hidden, false);
+    assert.equal(env.element('end_input').value, 'elevator 7f');
+    assert.equal(env.element('end_input').getAttribute('aria-invalid'), 'true');
+    assert.equal(env.element('route-description').textContent, '501 to 611');
+    assert.equal(env.url, url);
+    assert.match(env.element('error-text').textContent, /Elevator · 5F or Elevator · 6F/);
+    assert.match(env.element('error-text').textContent, /previous route is still shown/);
+});
+
+test('a shared link restores a validated canonical route without stealing focus or creating history', async t => {
+    const env = await setup(t, { url: 'http://127.0.0.1:8000/?from=room+611&to=lift-6' });
+    assert.equal(env.element('start_input').value, '611');
+    assert.equal(env.element('end_input').value, 'Elevator · 6F');
+    assert.equal(env.drawn.setFloor, 6);
+    assert.equal(env.element('route-planner').classList.contains('is-compact'), true);
+    assert.equal(document.activeElement, undefined);
+    assert.equal(env.history.pushes, 0);
+    assert.equal(env.history.replacements, 1);
+    assert.equal(new URL(env.url).searchParams.get('to'), 'Elevator · 6F');
+    assert.equal(env.createCount, 0, 'restoring a route does not force the 3D model to load');
+});
+
+test('incomplete, ambiguous and malformed shared links show field errors instead of creating routes', async t => {
+    for (const query of ['from=501', 'from=501&to=elevator', 'from=constructor&to=611',
+        'from=501&to=%3Cscript%3E', 'from=501&to=Elevator+7F']) {
+        const env = await setup(t, { url: `http://127.0.0.1:8000/?${query}` });
+        assert.equal(env.drawn.setRoute, undefined);
+        assert.equal(env.element('route-summary').hidden, true);
+        assert.equal(env.element('errormessage').hidden, false);
+        assert.equal(env.element('route-planner').classList.contains('is-compact'), false);
+        assert.equal(document.activeElement, undefined);
+        assert.equal(env.history.replacements, 0);
+        assert.equal(env.history.pushes, 0);
+    }
+});
+
+test('copy route shares the submitted route even when the fields contain unsubmitted edits', async t => {
+    const env = await setup(t);
+    await env.submit('Female toilet 5f', 'Room 611');
+    env.element('end_input').value = 'unsubmitted edit';
+    await env.element('copy-route').fire('click');
+    const link = new URL(env.copied[0]);
+    assert.equal(link.searchParams.get('from'), 'Female Toilet · 5F');
+    assert.equal(link.searchParams.get('to'), '611');
+    assert.equal(env.element('share-status').textContent, 'Link copied.');
+    assert.equal(env.element('share-fallback').hidden, true);
+    assert.equal(env.element('end_input').value, 'unsubmitted edit');
+});
+
+test('clipboard failure offers a selected manual-copy field and can recover', async t => {
+    const env = await setup(t);
+    await env.submit('501', '611');
+    env.setCopy(async () => { throw new Error('Clipboard blocked'); });
+    await env.element('copy-route').fire('click');
+    assert.equal(env.element('share-fallback').hidden, false);
+    assert.equal(env.element('route-link').value, env.url);
+    assert.equal(env.element('route-link').selected, true);
+    assert.equal(document.activeElement, env.element('route-link'));
+    assert.match(env.element('share-status').textContent, /copy the link below/);
+    env.setCopy(async () => {});
+    await env.element('copy-route').fire('click');
+    assert.equal(env.element('share-fallback').hidden, true);
+    assert.equal(env.element('share-status').textContent, 'Link copied.');
+});
+
+test('a late clipboard result cannot annotate a different submitted route', async t => {
+    const env = await setup(t);
+    await env.submit('501', '611');
+    let reject;
+    env.setCopy(() => new Promise((_resolve, fail) => { reject = fail; }));
+    const copying = env.element('copy-route').fire('click');
+    await env.submit('611', '501');
+    reject(new Error('Clipboard blocked'));
+    await copying;
+    assert.equal(env.element('share-status').textContent, '');
+    assert.equal(env.element('share-fallback').hidden, true);
+});
+
+test('browser history restores routes and clears them when returning to the initial URL', async t => {
+    const env = await setup(t);
+    await env.submit('501', '611');
+    await env.element('switchmap').fire('click');
+    await env.submit('611', 'elevator 6f');
+    await env.go(-1);
+    assert.equal(env.element('start_input').value, '501');
+    assert.equal(env.element('end_input').value, '611');
+    assert.deepEqual(env.drawn.setRoute.segments.map(segment => segment.floor), [5, 6]);
+    assert.equal(env.element('threedcontainer').hidden, false);
+    assert.equal(env.createCount, 1);
+    assert.equal(env.threeDRoutes.at(-1), env.drawn.setRoute);
+    await env.go(-1);
+    assert.equal(env.drawn.setRoute, null);
+    assert.equal(env.element('start_input').value, '');
+    assert.equal(env.element('end_input').value, '');
+    assert.equal(env.element('route-summary').hidden, true);
+    assert.equal(env.element('route-announcement').textContent, 'No route selected. Choose two places.');
+    await env.go(1);
+    assert.equal(env.element('route-description').textContent, '501 to 611');
+    assert.equal(env.history.pushes, 2);
+});
+
+test('URL validation recovers on back and hash navigation preserves unsaved edits', async t => {
+    const env = await setup(t);
+    await env.visit('http://127.0.0.1:8000/?from=501&to=constructor');
+    assert.equal(env.element('errormessage').hidden, false);
+    await env.go(-1);
+    assert.equal(env.element('errormessage').hidden, true);
+    assert.equal(env.element('end_input').value, '');
+    env.element('start_input').value = 'my draft';
+    await env.visit('http://127.0.0.1:8000/#map-viewport');
+    assert.equal(env.element('start_input').value, 'my draft');
 });

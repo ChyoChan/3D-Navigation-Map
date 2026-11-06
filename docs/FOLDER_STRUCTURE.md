@@ -25,14 +25,15 @@ All maintained and archived code is included. Coursework records, videos, CAD so
 │   │       ├── 56_13.0.gltf
 │   │       ├── 56_16.0.bin
 │   │       ├── 56_16.0.gltf
-│   │       ├── 5floor_done.png
 │   │       ├── 5floor_done_75.png
-│   │       ├── 6Floor_done.png
+│   │       ├── 5floor_done.png
 │   │       ├── 6floor_done_75.png
+│   │       ├── 6Floor_done.png
 │   │       ├── access.png
 │   │       ├── female.png
 │   │       └── toilet_man.png
 │   ├── src/
+│   │   ├── destination-input.js
 │   │   ├── main.js
 │   │   ├── map-2d.js
 │   │   ├── map-3d.js
@@ -53,10 +54,10 @@ All maintained and archived code is included. Coursework records, videos, CAD so
 │   │   │   ├── 56_8.0.bin
 │   │   │   ├── 56_8.0.gltf
 │   │   │   ├── 5floor_3.1.glb
-│   │   │   ├── 5floor_done.png
 │   │   │   ├── 5floor_done_75.png
-│   │   │   ├── 6Floor_done.png
+│   │   │   ├── 5floor_done.png
 │   │   │   ├── 6floor_done_75.png
+│   │   │   ├── 6Floor_done.png
 │   │   │   ├── untitled.bin
 │   │   │   └── untitled.gltf
 │   │   ├── pics/
@@ -82,8 +83,8 @@ All maintained and archived code is included. Coursework records, videos, CAD so
 │   │   ├── map.js
 │   │   ├── Node.js
 │   │   ├── style.css
-│   │   ├── ust.js
-│   │   └── ust_main.js
+│   │   ├── ust_main.js
+│   │   └── ust.js
 │   ├── PKPD_Group_5/
 │   │   └── 007_ Project Deliverable/
 │   │       └── 3D-Navigation-Map/
@@ -92,10 +93,10 @@ All maintained and archived code is included. Coursework records, videos, CAD so
 │   │           │   ├── 56_13.0.gltf
 │   │           │   ├── 56_16.0.bin
 │   │           │   ├── 56_16.0.gltf
-│   │           │   ├── 5floor_done.png
 │   │           │   ├── 5floor_done_75.png
-│   │           │   ├── 6Floor_done.png
+│   │           │   ├── 5floor_done.png
 │   │           │   ├── 6floor_done_75.png
+│   │           │   ├── 6Floor_done.png
 │   │           │   ├── access.png
 │   │           │   ├── female.png
 │   │           │   └── toilet_man.png
@@ -163,8 +164,8 @@ All maintained and archived code is included. Coursework records, videos, CAD so
 │               │   ├── 6floor.glb
 │               │   ├── floor.bin
 │               │   └── floor.gltf
-│               ├── 5floor_done.png
 │               ├── 5floor_done_75.png
+│               ├── 5floor_done.png
 │               ├── aStar_diagonal_final_path_only.js
 │               ├── main.html
 │               ├── map.js
@@ -175,6 +176,7 @@ All maintained and archived code is included. Coursework records, videos, CAD so
 │   └── REFACTOR_NOTES.md
 ├── tests/
 │   ├── assets.test.js
+│   ├── destination-input.test.js
 │   ├── main.test.js
 │   ├── map-2d.test.js
 │   ├── map-3d.test.js

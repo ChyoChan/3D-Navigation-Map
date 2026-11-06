@@ -16,6 +16,8 @@ The submitted deliverable is the maintained app. Existing floor geometry, destin
 
 Facility choices identify their floor. Submitted routes frame their current-floor segment in 2D, with separate Fit route and Fit map actions. Phone layouts collapse successful route searches into an editable summary. The 3D route uses a continuous line and a corridor-facing camera with Reset view.
 
+Destination entry tolerates case and separator differences while retaining explicit facility floors. Invalid edits preserve the last valid route. Route links contain validated canonical From/To choices, restore after refresh or history navigation, and support clipboard or manual copying.
+
 ## Brand Commitments
 
 The user selected a light cartographic style with warm neutral surfaces, deep green controls and a map-first layout. Keep the existing campus name and actual floor-plan/model assets.

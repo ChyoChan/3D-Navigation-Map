@@ -51,7 +51,7 @@
             <input id="end_input" name="end" list="destinations" placeholder="Where are you going?" required autocomplete="off" aria-describedby="destination-hint">
           </div>
           <datalist id="destinations"></datalist>
-          <p id="destination-hint" class="field-hint">Try 501 or Elevator · 6F. Facilities include their floor.</p>
+          <p id="destination-hint" class="field-hint">Try 501 or elevator 6f. Choose a floor for facilities.</p>
           <button id="run" class="button-primary" type="submit">Find route <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
         </form>
         </div>
@@ -62,9 +62,17 @@
             <div><h3 id="route-heading">Your route</h3><p id="route-description" class="route-description"></p></div>
             <button id="edit-route" class="edit-route" type="button" aria-controls="route-fields" aria-expanded="true">Hide fields</button>
           </div>
-          <div id="route-steps" class="route-steps" role="group" aria-label="Route floors"></div>
+          <div class="route-share">
+            <div id="route-steps" class="route-steps" role="group" aria-label="Route floors"></div>
+            <button id="copy-route" class="button-secondary" type="button">Copy route link</button>
+            <span id="share-status" class="share-status" role="status"></span>
+          </div>
           <p id="infomsg" class="route-note" role="status" hidden><span class="full-route-note">Outlined markers show the escalator between floors. Select a floor to follow that part of your route.</span><span class="compact-route-note">Via escalator between floors.</span></p>
           <p id="same-floor-note" class="route-note">Follow the highlighted path on the floor plan.</p>
+          <div id="share-fallback" class="field share-fallback" hidden>
+            <label for="route-link">Route link</label>
+            <input id="route-link" type="url" readonly aria-describedby="share-status">
+          </div>
         </section>
         <p id="route-announcement" class="sr-only" role="status" aria-live="polite"></p>
       </section>

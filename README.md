@@ -2,6 +2,13 @@
 
 The maintained app is based on the submitted deliverable from `PKPD_Group_5/007_ Project Deliverable/3D-Navigation-Map`. It finds routes between classrooms and facilities on floors 5 and 6, with a 2D floor plan and a first-person 3D view.
 
+## Live app
+
+[Open Campus Navigation](https://chyochan.github.io/3D-Navigation-Map/). Use Copy route link on the public app to share directions with other people.
+
+GitHub Pages serves the app files from the root of the `gh-pages` branch. Future deployments update that branch with the contents of `app/`.
+
+
 ## Run
 
 From this project folder:
@@ -13,6 +20,10 @@ npm start
 Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Python 3 serves the static app; Node.js/npm runs the development commands. No dependency installation or build step is needed. The browser needs internet access for the existing pinned p5.js and Three.js CDN dependencies. Serve the app over HTTP rather than opening the HTML file directly.
 
 Choose From and To destinations and press Find route or Enter. Facilities include their floor, for example `Elevator · 6F`; this choice is independent of the displayed map floor. A cross-floor route uses the escalator; browse each floor to view its segment. Browsing floors preserves the submitted route, including when the input fields contain unsubmitted edits. On phones, a successful search collapses the fields into the route summary; Edit route restores the saved values.
+
+Destination entry accepts case, spacing and common floor separators, for example `room 501`, `elevator 6f` or `lift-6`. Successful searches show the canonical name. A facility without a floor offers both choices; partial or invalid entries show specific suggestions and keep the last valid route in both maps.
+
+Choose Copy route link to share the submitted route. The From and To choices are stored in the URL and restored on opening, refresh and browser Back/Forward. If clipboard access is unavailable, a selected read-only link field supports manual copying. Links use the current site address: localhost links work only on the same computer; use the hosted app's address to share with other people.
 
 The 2D plan fits the available space and automatically frames the route after a search or floor change. Use the zoom buttons, mouse wheel, or pinch to zoom; drag to pan. Fit route frames the current floor's segment; Fit map restores the whole floor plan. With the canvas focused, arrow keys pan, +/− zoom, and 0 or Home fits the plan. Select a route floor step to view that segment.
 
@@ -26,6 +37,7 @@ Choose 3D view to explore the model along a thin continuous route line. The came
 │   ├── index.html               Page, import map and accessible controls
 │   ├── src/
 │   │   ├── navigation.js        Destinations, calibrated geometry and pure A* routing
+│   │   ├── destination-input.js Forgiving entry and canonical suggestions
 │   │   ├── map-2d.js            Responsive p5 floor plan and minimap
 │   │   ├── map-3d.js            Three.js navigation, route line and camera reset
 │   │   └── main.js              Form events and communication between maps
@@ -61,7 +73,7 @@ With Node.js 20 or newer:
 npm test
 ```
 
-The 38 tests cover all 1,922 destination/floor combinations, representative exact paths from the original source, explicit facility floors, accessible validation, compact route editing, route framing, responsive resizing, touch/pointer/keyboard controls, minimap state, 3D camera reset, loading/retry/cancellation, animation lifecycle, model calibration and case-sensitive asset references. Tests use graphics mocks; browser checks verify the real floor images, model and 2D/3D switching separately.
+The 52 tests cover all 1,922 destination/floor combinations, representative exact paths from the original source, forgiving destination matching, explicit facility floors, accessible validation, retained routes after invalid edits, URL validation and history, clipboard/manual copying, compact route editing, route framing, responsive resizing, touch/pointer/keyboard controls, minimap state, 3D camera reset, loading/retry/cancellation, animation lifecycle, model calibration and case-sensitive asset references. Tests use graphics mocks; browser checks verify the real floor images, model and 2D/3D switching separately.
 
 Archived prototypes and submission documents are preserved records, not part of the maintained app's test target. Existing experimental-code defects remain in the archive.
 

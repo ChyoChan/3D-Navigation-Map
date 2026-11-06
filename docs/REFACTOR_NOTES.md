@@ -50,3 +50,11 @@ The interface now uses a light cartographic palette and responsive route/map lay
 - Exposed 31 destinations: 21 rooms and 10 explicit facility/floor combinations. Generic facility aliases remain compatible within the routing module, while the form requires a floor-qualified choice.
 
 All 38 tests pass, including all 1,922 public destination/floor combinations, exact original paths, framing on small and short viewports, compact editing and 3D reset/lifecycle checks. Real-browser captures cover desktop, phone, 320px width, tablet and short landscape in both map modes. The scoped review found and verified fixes for same-point floor reporting and small-screen endpoint/control overlap. The style detector reported 15 pre-existing token-documentation advisories and no new mechanical bans; unrelated styling was left alone. Physical touch hardware and browsers outside Chromium were not tested. The existing CDN requirement and free-camera behavior remain.
+
+## Forgiving search and route links
+
+Added a small destination-input module that resolves case, spacing, common floor separators, room prefixes and lift aliases to the existing labels. Facilities still require a floor. Invalid or partial input offers specific choices and preserves the last submitted route, map framing and 3D camera.
+
+Copy route link shares the submitted canonical endpoints independently of unsaved field edits. URL query parameters restore validated routes on load, refresh and Back/Forward; invalid links show field errors. Clipboard denial or absence reveals a selected read-only link field. Links use the current host, so localhost links are limited to the same computer.
+
+All 52 tests pass, including normalizer boundaries, URL restoration/history, route retention in 3D, clipboard fallback and late clipboard results. The scoped source review caught and verified a fix for stale screen-reader route text when navigating back to an empty URL. Renderer modules, calibrated geometry, models, assets and archives are unchanged. The style scan found two pre-existing radius-documentation advisories; no unrelated style changes were made.

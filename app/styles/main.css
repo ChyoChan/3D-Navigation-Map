@@ -86,9 +86,15 @@ h2 { font-size: 26px; line-height: 1.2; font-weight: 650; letter-spacing: -.025e
 .compact-route-note { display: none; }
 .route-description { text-wrap: pretty; margin-top: 5px; font-size: 18px; font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }
 .route-steps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.route-steps button { min-height: 44px; padding: 8px 14px; background: var(--color-surface); border: 1px solid var(--color-input-border); border-radius: 8px; font-size: 13px; font-weight: 600; }
+.route-steps button, .button-secondary { min-height: 44px; padding: 8px 14px; background: var(--color-surface); border: 1px solid var(--color-input-border); border-radius: 8px; font-size: 13px; font-weight: 600; }
 .route-steps button[aria-pressed="true"] { color: var(--color-primary); background: var(--color-selected); border-color: var(--color-primary); }
 .route-note { margin-top: 12px; color: var(--color-muted); font-size: 13px; line-height: 1.6; }
+.button-secondary { color: var(--color-primary); }
+.button-secondary:hover { background: var(--color-selected); }
+.route-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
+.route-share .route-steps { margin: 0; }
+.share-status { color: var(--color-muted); font-size: 12px; line-height: 1.5; }
+.share-fallback { margin-top: 12px; }
 .legend { border-top: 1px solid var(--color-border); margin: 0 24px; }
 .legend summary { display: flex; align-items: center; justify-content: space-between; min-height: 56px; font-size: 13px; font-weight: 600; cursor: pointer; list-style: none; }
 .legend summary::-webkit-details-marker { display: none; }
@@ -190,6 +196,7 @@ canvas { display: block; touch-action: none; }
   .route-summary h3 { grid-column: 1; font-size: 12px; }
   .route-description { font-size: 16px; }
   .route-steps { margin-top: 12px; gap: 6px; }
+  .route-share { margin-top: 12px; }
   .route-steps button { min-width: 44px; padding: 8px; font-size: 12px; }
   .route-note { grid-column: 1 / -1; font-size: 12px; margin-top: 10px; }
   .map-workspace { grid-area: map; padding: 0; }
