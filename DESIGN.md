@@ -209,7 +209,7 @@ The 2D/3D switch is a small neutral track containing text-labelled buttons. Its 
 
 The map container has a bordered toolbar, clipped drawing viewport and bordered footer. Zoom, Fit route, Fit map and floor controls stay within its viewport. Search and route-floor changes automatically frame the relevant segment with space for markers and controls. The 3D view adds a live floor-plan minimap, help text, movement controls and a labelled Reset view action below the minimap. Icon-only buttons carry accessible names; icons use inline SVG strokes. Canvas labels explain keyboard controls, and a skip link moves focus directly to the map.
 
-Campus drawings, facility pictograms, model geometry and textures remain content assets. The 3D route uses a thin evergreen line and small evergreen/terracotta endpoint cones. Its camera faces along the route from the corridor near the origin; Reset view restores this pose. No new raster assets were generated for the interface; The (20) original source rasters remain unchanged.
+Campus drawings, facility pictograms, model geometry and textures remain content assets. The 3D route uses a thin evergreen line and small evergreen/terracotta endpoint cones. Its camera faces along the route from the corridor near the origin; Reset view restores this pose. No new raster assets were generated for the interface; The original source raster pixels remain unchanged; personal export metadata is excluded from public files.
 
 ### Legend and Status
 

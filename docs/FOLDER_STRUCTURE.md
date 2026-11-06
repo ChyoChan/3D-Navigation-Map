@@ -132,10 +132,8 @@ All maintained and archived code is included. Coursework records, videos, CAD so
 │       │   │   ├── Toxicology.html
 │       │   │   ├── Welcome.html
 │       │   │   └── Zoology.html
-│       │   ├── Exercise_1.html
 │       │   ├── Exercise_2.html
 │       │   ├── Exercise_3.html
-│       │   └── Exercise_5.html
 │       └── web/
 │           ├── FYP/
 │           │   ├── 5floor_done_75.png

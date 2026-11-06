@@ -2,3 +2,23 @@
 node_modules/
 .env
 .env.*
+
+# Private originals, audit material, and coursework stay local.
+/local-private/
+/.impeccable/
+/assets/
+/docs/Assignment/
+/docs/Information/
+/docs/Project Deliverable/
+/docs/*.docx
+/archive/PKPD_Group_5/*
+!/archive/PKPD_Group_5/007_ Project Deliverable/
+/archive/PKPD_Group_5/007_ Project Deliverable/*
+!/archive/PKPD_Group_5/007_ Project Deliverable/3D-Navigation-Map/
+/archive/web/Assignment1/*.pdf
+/archive/web/Assignment1/Exercise_1.html
+/archive/web/Assignment1/Exercise_5.html
+*.mp4
+*.mov
+*.dwg
+*.bak

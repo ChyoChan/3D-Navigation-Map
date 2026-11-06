@@ -58,3 +58,7 @@ Added a small destination-input module that resolves case, spacing, common floor
 Copy route link shares the submitted canonical endpoints independently of unsaved field edits. URL query parameters restore validated routes on load, refresh and Back/Forward; invalid links show field errors. Clipboard denial or absence reveals a selected read-only link field. Links use the current host, so localhost links are limited to the same computer.
 
 All 52 tests pass, including normalizer boundaries, URL restoration/history, route retention in 3D, clipboard fallback and late clipboard results. The scoped source review caught and verified a fix for stale screen-reader route text when navigating back to an empty URL. Renderer modules, calibrated geometry, models, assets and archives are unchanged. The style scan found two pre-existing radius-documentation advisories; no unrelated style changes were made.
+
+## Public-data boundary
+
+Public files exclude personal coursework details and image-export identity/tracking metadata. Unredacted originals, cleanup evidence and Git history backups stay local under an ignored private directory. Image pixels, map calibration, models and third-party attribution are preserved. Affected Git history was rewritten; older clones must be replaced or carefully cleaned before any future push.

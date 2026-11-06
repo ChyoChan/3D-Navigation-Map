@@ -59,7 +59,7 @@ Choose 3D view to explore the model along a thin continuous route line. The came
 └── README.md
 ```
 
-This repository contains the maintained app and all three historical source trees with their runtime assets. Coursework documents, reports, videos, CAD source records and local design-review captures stay in the original local project; they are excluded from this code distribution. Historical code keeps its original relative structure. The large `ust.js` and `ust_main.js` files are captured bundles in the earlier app, not maintained source.
+This repository contains the maintained app and historical source trees with their runtime assets. Public exports exclude personal coursework details and personal image-export metadata; unredacted originals and cleanup backups stay local. Coursework documents, reports, videos, CAD source records and local design-review captures stay in the original local project; they are excluded from this code distribution. Historical code keeps its original relative structure. The large `ust.js` and `ust_main.js` files are captured bundles in the earlier app, not maintained source.
 
 The app exchanges one route value: `{ from, to, segments: [{ floor, path: [{ x, y }] }] }`. Routing has no browser or graphics dependency. Each map owns its rendering state.
 
